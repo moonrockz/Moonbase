@@ -1,0 +1,7 @@
+members = [
+  ".",
+  "./pkgs/contracts",
+  "./apps/cli",
+  "./apps/web",
+  "./apps/desktop",
+]

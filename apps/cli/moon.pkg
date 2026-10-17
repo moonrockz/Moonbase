@@ -1,0 +1,14 @@
+pkgtype(kind: "executable")
+
+import {
+  "moonrockz/moonbase-contracts" @contracts,
+  "moonbitlang/core/env",
+  "moonbitlang/x/sys",
+}
+
+options(
+  targets: {
+    "args_js.mbt": [ "js" ],
+    "args_native.mbt": [ "native", "wasm", "wasm-gc" ],
+  },
+)

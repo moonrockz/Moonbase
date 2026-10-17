@@ -1,0 +1,6 @@
+pkgtype(kind: "executable")
+
+import {
+  "moonrockz/moonbase-contracts" @contracts,
+  "moonbit-community/proton_contract",
+}
