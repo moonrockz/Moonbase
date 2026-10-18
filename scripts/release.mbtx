@@ -227,6 +227,7 @@ fn release_notes(version : Version, section : String) -> String {
 let publish_list : Array[(String, String)] = [
   ("pkgs/contracts", "moonrockz/moonbase-contracts"),
   ("pkgs/mdc", "moonrockz/moonbase-mdc"),
+  ("pkgs/ears", "moonrockz/moonbase-ears"),
   ("apps/cli", "moonrockz/moonbase-cli"),
   ("apps/web", "moonrockz/moonbase-web"),
   ("apps/desktop", "moonrockz/moonbase-desktop"),

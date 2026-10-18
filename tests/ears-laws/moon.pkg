@@ -1,0 +1,6 @@
+import {
+  "moonrockz/moonbase-ears" @ears,
+  "moonrockz/expect",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/shrink",
+} for "wbtest"

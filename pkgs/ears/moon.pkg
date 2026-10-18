@@ -1,0 +1,10 @@
+import {
+  "moonrockz/moonbase-mdc" @mdc,
+  "moonbitlang/core/debug",
+}
+
+import {
+  "moonrockz/moonbase-ears" @ears,
+  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/expect",
+} for "test"

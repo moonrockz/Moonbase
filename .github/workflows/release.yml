@@ -42,6 +42,7 @@ on:
       - apps/desktop/**
       - pkgs/contracts/**
       - pkgs/mdc/**
+      - pkgs/ears/**
       - .config/mise/config.toml
       - moon.mod
       - CHANGELOG.md
