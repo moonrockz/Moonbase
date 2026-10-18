@@ -8,6 +8,7 @@ A MoonBit monorepo for Moonbase: shared contracts, a command-line application, a
 |------|--------|---------|
 | `pkgs/contracts` | `moonrockz/moonbase-contracts` | Commands shared by the CLI, the web UI and the desktop shell |
 | `pkgs/mdc` | `moonrockz/moonbase-mdc` | Markdown with YAML frontmatter, cursors, visitors, folds and reduction |
+| `pkgs/ears` | `moonrockz/moonbase-ears` | Typed EARS requirements, plain-text parsing and Markdown/MDC extraction |
 | `apps/cli` | `moonrockz/moonbase-cli` | The `moonbase` command |
 | `apps/web` | `moonrockz/moonbase-web` | Web UI written with [Rabbita](https://github.com/moonbit-community/rabbita) |
 | `apps/desktop` | `moonrockz/moonbase-desktop` | Desktop shell: Proton command descriptors and the HTML document the window loads |
@@ -120,6 +121,7 @@ Moonbase/
 ├── apps/desktop/              # Proton shell (moonrockz/moonbase-desktop)
 ├── pkgs/contracts/            # shared commands (moonrockz/moonbase-contracts)
 ├── pkgs/mdc/                  # Markdown with frontmatter (moonrockz/moonbase-mdc)
+├── pkgs/ears/                 # EARS specifications (moonrockz/moonbase-ears)
 ├── tests/                     # acceptance suites and domain laws, unpublished
 ├── scripts/*.mbtx             # task scripts, run with moonx
 ├── moon.mod                   # workspace root module

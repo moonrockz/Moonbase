@@ -58,3 +58,22 @@ mise exec -- moon test tests/mdc-laws --target native
 `mise run test` includes these suites automatically. Acceptance tests declare
 `supported_targets = "js+native"`; laws run on all four targets. The runner reads
 package restrictions instead of skipping the entire tests module on wasm.
+
+## EARS tests
+
+`ears-acceptance/features/ears.feature` covers all six EARS patterns, malformed
+sentences, formatted Markdown lists, existing MDC documents, retained frontmatter
+and original source positions. Each scenario owns its state.
+
+`ears-laws/` runs three properties with 600 generated cases per target. They
+check clause preservation, canonical rendering and whitespace invariance, and
+agreement between text and Markdown extraction with exact source spans.
+Generators include complex clauses, Unicode, BOMs and LF/CRLF/CR line endings.
+Shrinking preserves valid syntax. Seeds, case counts and size limits are explicit.
+
+```shell
+mise exec -- moon test tests/ears-acceptance tests/ears-laws --target js
+mise exec -- moon test tests/ears-acceptance tests/ears-laws --target native
+mise exec -- moon test tests/ears-laws --target wasm
+mise exec -- moon test tests/ears-laws --target wasm-gc
+```
