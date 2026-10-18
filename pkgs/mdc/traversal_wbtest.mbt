@@ -12,6 +12,10 @@ test "walk handles a deeply nested constructed tree" {
     Continue
   })
   assert_eq(count, 10001)
+  let reduced = reduce(block_node(block), (_, children) => {
+    1 + children.fold(init=0, (total, count) => total + count)
+  })
+  assert_eq(reduced, 10001)
 }
 
 ///|

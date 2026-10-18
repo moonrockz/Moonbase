@@ -10,12 +10,13 @@ regressions beside their production package.
 ## MDC acceptance tests
 
 `mdc-acceptance/features/mdc.feature` covers metadata and Markdown parsing,
-source positions, rejected input, export isolation, traversal order and pruning.
+source positions, rejected input, export isolation, traversal order, pruning,
+cursor navigation, bottom-up reduction and consumer-implemented traversal traits.
 The scenario World owns its state. Expect's `expect_all` reports related assertion
 failures together. Feature paths are relative to the `tests` module directory,
 which is the working directory Moon uses for these tests.
 
-Run the eight scenarios on JS or native:
+Run the thirteen scenarios on JS or native:
 
 ```shell
 mise exec -- moon test tests/mdc-acceptance --target js
@@ -24,7 +25,7 @@ mise exec -- moon test tests/mdc-acceptance --target native
 
 ## MDC laws
 
-`mdc-laws/` runs six properties with 1,150 generated cases per target:
+`mdc-laws/` runs thirteen properties with 2,400 generated cases per target:
 
 - Parsing preserves the exact body, header presence and original source origin.
 - Frontmatter reconstruction preserves metadata, even after exported YAML is mutated.
@@ -32,6 +33,13 @@ mise exec -- moon test tests/mdc-acceptance --target native
 - Walk, visitor and fold agree with a recursive traversal model for continue, prune and stop.
 - A fold that preserves its accumulator returns its initial value.
 - Adding or removing frontmatter leaves Markdown traversal unchanged.
+- Cursor moves round-trip, saved positions stay fixed and paths resolve from their root.
+- Cursor visitor, folder and walk callbacks agree with a positioned recursive model.
+- Reduce matches recursive structural reduction and calls children before parents.
+- Reduced node count and height match traversal observations.
+- Subtree cursor operations retain ancestors and paths; node operations establish a new root.
+- Generic trait folds agree with closure adapters and the traversal model, including pruning and stopping.
+- Generic trait reducers preserve child grouping, order and saved cursor context.
 
 Generators produce nested Markdown, Unicode metadata, BOMs and LF/CRLF/CR line
 endings. Shrinking reduces the choices used to generate a document and renders
