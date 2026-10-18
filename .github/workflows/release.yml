@@ -41,6 +41,7 @@ on:
       - apps/web/**
       - apps/desktop/**
       - pkgs/contracts/**
+      - pkgs/mdc/**
       - .config/mise/config.toml
       - moon.mod
       - CHANGELOG.md

@@ -1,0 +1,8 @@
+import {
+  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/expect",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/shrink",
+  "moonbit-community/cmark/cmark",
+} for "wbtest"

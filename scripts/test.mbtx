@@ -6,7 +6,7 @@
 ///
 /// `moon test <path>` tests only the package at exactly that path, not its
 /// sub-packages, so packages are discovered from `moon.work` recursively.
-/// The tests module uses async and runs on js and native only.
+/// Packages declare target restrictions in their `moon.pkg`.
 import {
   "moonbitlang/async@0.22.5",
   "moonbitlang/async@0.22.5/process",
@@ -90,10 +90,6 @@ async fn main {
     println("🧪 Testing for \{target}...")
     let paths = []
     for module_path in members(@fs.read_file("moon.work").text()) {
-      // The acceptance module uses async, which supports js and native here.
-      if module_path == "tests" && target != "js" && target != "native" {
-        continue
-      }
       packages(module_path, target, paths)
     }
     if paths.is_empty() {

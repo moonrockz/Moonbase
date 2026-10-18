@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/async",
+  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/moonspec",
+  "moonrockz/expect",
+  "moonbit-community/cmark/cmark",
+  "moonbitlang/core/json",
+} for "wbtest"
+
+supported_targets = "js+native"
