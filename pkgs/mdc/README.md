@@ -96,6 +96,111 @@ inline views also offer `to_cmark()` for exporting a detached subtree, including
 its layout and metadata. Exports copy mutable containers throughout the tree;
 use `kind()`, `location()` and `children()` for inspection without subtree copies.
 
+## Cursor navigation
+
+`doc.cursor()`, `node.cursor()` and `Cursor::Cursor(node)` create immutable
+positions at a navigation root. `node()` gives the focused node. `first_child()`,
+`last_child()`, `parent()`, `next_sibling()` and `previous_sibling()` return a new
+`Cursor` in `Some`, or `None` at a boundary. The original position remains a
+bookmark. `children()` returns a read-only collection of child positions.
+
+`depth()` counts edges from the navigation root. `path()` returns an opaque
+`NodePath` with read-only child `indices()`. Its display form is `$[0][1]`, with
+`$` denoting the root. Paths follow MDC traversal children, including blank
+lines and other cmark layout nodes. Frontmatter, when present, is the document's
+first child. `node.at(path)` resolves a path relative to that node and returns
+`None` if it does not exist there.
+
+Use `walk_cursor(root, enter, leave=...)` for cursor callbacks, or implement
+`CursorVisitor` and call `doc.accept_cursor(visitor)`. Its `visit_document`,
+`visit_frontmatter`, `visit_block`, `visit_inline` and `leave` methods receive
+a `Cursor`. The enter methods return the same traversal controls as `Visitor`.
+Saved positions and navigation within callbacks cannot move the outer traversal.
+
+`Folder::with_cursor(callback)` passes `(accumulator, Cursor)` to a fold callback:
+
+```moonbit
+let deepest = doc.fold(0, @mdc.Folder::with_cursor((deepest, cursor) => {
+  Continue(if cursor.depth() > deepest { cursor.depth() } else { deepest })
+}))
+```
+
+`Node::fold` starts a new navigation root at that node. A saved cursor's
+`walk`, `accept` and `fold` methods traverse its subtree while retaining its
+original ancestors, depth and path. `Cursor::accept` takes a `CursorVisitor`.
+The existing node-only visitor, folder and walk APIs remain available.
+
+## Bottom-up reduce
+
+`doc.reduce(callback)` and `reduce(root, callback)` compute one result per node
+after its children. The callback receives `(Node, ReadOnlyArray[A])`, with one
+result per immediate child in `children()` order. Leaves receive an empty
+collection. The final answer is the root's result:
+
+```moonbit
+let nodes = doc.reduce((_, children : ReadOnlyArray[Int]) => {
+  1 + children.fold(init=0, (total, count) => total + count)
+})
+```
+
+`doc.reduce_cursor` and `reduce_cursor(root, callback)` pass a `Cursor` instead
+of a node. `cursor.reduce(callback)` retains that position's original navigation
+context while reducing its subtree. A reduction visits every node exactly once
+in postorder and uses an explicit stack. Fold threads one accumulator in
+preorder and supports pruning and stopping; reduce combines the completed
+results of each node's own children.
+
+Child result collections are immutable. Values supplied by callbacks belong
+to the caller and are not deep-copied. Use immutable result types when sharing
+them between reduction results.
+
+## Trait implementations
+
+Consumers can implement these open traits on their own types:
+
+| Trait | Required method | Entry point |
+| --- | --- | --- |
+| `Fold` | `enter(Self, Node) -> FoldAction[Self]` | `fold_with(root, initial)` or `doc.fold_with(initial)` |
+| `CursorFold` | `enter(Self, Cursor) -> FoldAction[Self]` | `fold_cursor_with(root, initial)` or `doc.fold_cursor_with(initial)` |
+| `Reducer` | `reduce(Node, ReadOnlyArray[Self]) -> Self` | `reduce_with(root)` or `doc.reduce_with()` |
+| `CursorReducer` | `reduce(Cursor, ReadOnlyArray[Self]) -> Self` | `reduce_cursor_with(root)` or `doc.reduce_cursor_with()` |
+
+Fold implementations return the next accumulator with traversal control. Reducer
+implementations construct a result from the node and its completed child results.
+The reducer method has no receiver; a result annotation selects the implementation.
+Neither operation requires mutable fields or shared state.
+
+The traits are not generic, but their implementations and the traversal functions
+can be. A generic wrapper can preserve a domain result while adding node counts:
+
+```moonbit
+struct Tracked[A] {
+  value : A
+  count : Int
+}
+
+impl[A : @mdc.Reducer] @mdc.Reducer for Tracked[A] with fn reduce(node, children) {
+  {
+    value: @mdc.Reducer::reduce(node, children.map(child => child.value)),
+    count: 1 + children.fold(init=0, (sum, child) => sum + child.count),
+  }
+}
+```
+
+If a consumer's `Intent` type implements `Reducer`, then
+`let result : Tracked[Intent] = doc.reduce_with()` computes both the domain result
+and its node count. Generic fold wrappers work the same way, forwarding each
+`FoldAction` while returning a new wrapper value. The
+[trait laws](../../tests/mdc-laws/traits_wbtest.mbt) exercise generic wrappers for
+all four traits through the public API.
+
+`Node` offers the same trait entry points as `Document`, starting a new root.
+`cursor.fold_with(initial)` takes a `CursorFold` and `cursor.reduce_with()` uses
+a `CursorReducer`; both retain the saved position's original ancestors and paths.
+`Folder::from_trait()` and `Folder::from_cursor_trait()` adapt trait implementations
+to the existing `fold(initial, folder)` API. Closure-based APIs remain available
+when a separate type would add no useful contract.
+
 ## Tests
 
 The package contains focused unit and regression tests. Public API acceptance

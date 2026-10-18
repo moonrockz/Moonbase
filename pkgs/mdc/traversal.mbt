@@ -97,8 +97,8 @@ fn inline_node(inline : @cmark.Inline) -> Node {
 
 ///|
 priv enum WalkFrame {
-  Enter(Node)
-  Leave(Node)
+  Enter(Cursor)
+  Leave(Cursor)
 }
 
 ///|
@@ -110,17 +110,40 @@ pub fn walk(
   enter : (Node) -> Control,
   leave~ : (Node) -> Unit = _ => (),
 ) -> Unit {
-  let pending : Array[WalkFrame] = [Enter(root)]
+  walk_cursor(root, cursor => enter(cursor.node()), leave=cursor => {
+    leave(cursor.node())
+  })
+}
+
+///|
+/// Walk with immutable cursor positions. Navigation in either callback cannot
+/// change this walk. Positions retain their ancestors and may be saved safely.
+pub fn walk_cursor(
+  root : Node,
+  enter : (Cursor) -> Control,
+  leave~ : (Cursor) -> Unit = _ => (),
+) -> Unit {
+  root.cursor().walk(enter, leave~)
+}
+
+///|
+/// Walk this position's subtree, retaining its original ancestors and paths.
+pub fn Cursor::walk(
+  self : Cursor,
+  enter : (Cursor) -> Control,
+  leave~ : (Cursor) -> Unit = _ => (),
+) -> Unit {
+  let pending : Array[WalkFrame] = [Enter(self)]
   while pending.pop() is Some(frame) {
     match frame {
-      Leave(node) => leave(node)
-      Enter(node) =>
-        match enter(node) {
+      Leave(cursor) => leave(cursor)
+      Enter(cursor) =>
+        match enter(cursor) {
           Stop => return
-          SkipChildren => leave(node)
+          SkipChildren => leave(cursor)
           Continue => {
-            pending.push(Leave(node))
-            let children = node.children()
+            pending.push(Leave(cursor))
+            let children = cursor.children()
             for i = children.length() - 1; i >= 0; i = i - 1 {
               pending.push(Enter(children[i]))
             }
@@ -198,19 +221,40 @@ pub extend FoldAction with @debug.Debug::{to_repr}
 ///|
 /// A fold callback threads an accumulator through nodes in pre-order.
 struct Folder[A] {
-  enter : (A, Node) -> FoldAction[A]
+  enter : (A, Cursor) -> FoldAction[A]
 }
 
 ///|
 pub fn[A] Folder::Folder(enter : (A, Node) -> FoldAction[A]) -> Folder[A] {
+  { enter: (acc, cursor) => enter(acc, cursor.node()), }
+}
+
+///|
+/// A folder with navigation context, using the same accumulator and control
+/// semantics as the node-only constructor.
+pub fn[A] Folder::with_cursor(
+  enter : (A, Cursor) -> FoldAction[A],
+) -> Folder[A] {
   { enter, }
 }
 
 ///|
 pub fn[A] Document::fold(self : Document, init : A, folder : Folder[A]) -> A {
+  self.root().fold(init, folder)
+}
+
+///|
+/// Fold a subtree. Cursor paths start at this node.
+pub fn[A] Node::fold(self : Node, init : A, folder : Folder[A]) -> A {
+  self.cursor().fold(init, folder)
+}
+
+///|
+/// Fold this subtree while retaining navigation context from its original root.
+pub fn[A] Cursor::fold(self : Cursor, init : A, folder : Folder[A]) -> A {
   let mut acc = init
-  walk(Document(self), node => {
-    match (folder.enter)(acc, node) {
+  self.walk(cursor => {
+    match (folder.enter)(acc, cursor) {
       Continue(value) => {
         acc = value
         Continue

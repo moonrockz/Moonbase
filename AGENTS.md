@@ -61,7 +61,7 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 ## Product layout
 
 - `pkgs/contracts` (`moonrockz/moonbase-contracts`) holds the commands the CLI, the web UI and the desktop shell share. `version()` matches the workspace version.
-- `pkgs/mdc` (`moonrockz/moonbase-mdc`) adds YAML frontmatter to cmark documents and exposes visitor, fold and traversal APIs for downstream format modules such as OKF.
+- `pkgs/mdc` (`moonrockz/moonbase-mdc`) adds YAML frontmatter to cmark documents and exposes immutable cursors, visitors, folds and bottom-up reduction for downstream format modules such as OKF.
 - `tests` (`moonrockz/moonbase-tests`) contains acceptance suites and property laws. It is a workspace member and is excluded from both publish lists.
 - `apps/cli` (`moonrockz/moonbase-cli`) is the `moonbase` command. `preferred_target` is `wasm`, so `moonx` runs it.
 - `apps/web` (`moonrockz/moonbase-web`) is the Rabbita page. It is JavaScript only and mounts into the element `app`.
