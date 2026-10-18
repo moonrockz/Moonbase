@@ -46,9 +46,10 @@ and spacing and can be parsed back to an equal requirement.
 Clauses, the system name and the response must be nonempty. Clause contents are
 free text: the parser does not split English conjunctions into separate states
 or responses, infer actor identities, or judge whether a requirement is testable.
-A comma followed by an EARS keyword starts a new clause. Avoid that sequence
-inside a clause's free text. Requirement IDs, labels and sentence splitting are
-outside this grammar.
+A comma followed by an EARS keyword starts a new clause. In unwanted conditions,
+`then` is structural only when followed by `the`. Avoid other clause-opening
+keyword sequences inside a clause's free text. Requirement IDs, labels and
+sentence splitting are outside this grammar.
 
 ## Plain-text specifications
 

@@ -61,7 +61,14 @@ pub fn from_mdc(document : @mdc.Document) -> Specification {
                 start: document.body_offset() + loc.first_ccode,
                 end: document.body_offset() + loc.last_ccode + 1,
                 line: document.body_line() + loc.first_line.0 - 1,
-                column: loc.first_ccode - loc.first_line.1 + 1,
+                column: loc.first_ccode -
+                loc.first_line.1 +
+                1 +
+                (if document.body_line() == 1 && loc.first_line.0 == 1 {
+                  document.body_offset()
+                } else {
+                  0
+                }),
               })
             }
             collect_candidate(

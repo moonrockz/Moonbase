@@ -125,7 +125,12 @@ test "law: text and Markdown extraction agree and spans recover the original sen
       let expected = @ears.parse(sentence)
       let nl = input.newline()
       let text = "\u{FEFF}\t" + sentence + nl + "invalid" + nl + sentence
-      let prefix = "\u{FEFF}---\{nl}title: '🌙 Café'\{nl}---\{nl}# Requirements\{nl}\{nl}- "
+      let with_header = input.style % 2 == 0
+      let prefix = if with_header {
+        "\u{FEFF}---\{nl}title: '🌙 Café'\{nl}---\{nl}# Requirements\{nl}\{nl}- "
+      } else {
+        "\u{FEFF}- "
+      }
       let source = prefix + sentence + nl
       let plain = @ears.parse_text(text)
       let markdown = @ears.parse_markdown(source)
@@ -144,8 +149,8 @@ test "law: text and Markdown extraction agree and spans recover the original sen
       @expect.expect_all(s => {
         s.expect(item.requirement()).to_equal(expected)
         s.expect(span.start()).to_equal(prefix.length())
-        s.expect(span.line()).to_equal(6)
-        s.expect(span.column()).to_equal(3)
+        s.expect(span.line()).to_equal(if with_header { 6 } else { 1 })
+        s.expect(span.column()).to_equal(if with_header { 3 } else { 4 })
         s.expect(source[span.start():span.end()].to_owned()).to_equal(sentence)
         s.expect(plain.requirements()[0].requirement()).to_equal(expected)
         s.expect(plain.requirements()[1].requirement()).to_equal(expected)

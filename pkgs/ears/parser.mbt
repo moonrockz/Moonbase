@@ -47,26 +47,42 @@ fn clause_keyword(text : String) -> String? {
 }
 
 ///|
+fn starts_then_system(text : String, at : Int32) -> Bool {
+  starts_word_at(text, at, "then") && starts_word_at(text, at + 5, "the")
+}
+
+///|
 // A comma is structural only when a reserved clause keyword follows it.
 // Ordinary commas in natural-language clauses remain part of that clause.
 fn take_clause(
   text : String,
   unwanted : Bool,
 ) -> (String, String) raise ParseError {
+  let mut saw_incomplete_then = false
   for i in 0..<text.length() {
     if text.code_unit_at(i) == 44 {
       let rest = text[i + 1:].trim_start().to_owned()
-      if clause_keyword(rest) is Some(_) {
+      if clause_keyword(rest) is Some(keyword) {
+        if unwanted && keyword == "then" && !starts_then_system(rest, 0) {
+          saw_incomplete_then = true
+          continue
+        }
         return (text[:i].trim_end().to_owned(), rest)
       }
     }
     if unwanted && text.code_unit_at(i) == 32 {
       if starts_word_at(text, i + 1, "then") {
-        return (text[:i].trim_end().to_owned(), text[i + 1:].to_owned())
+        if starts_then_system(text, i + 1) {
+          return (text[:i].trim_end().to_owned(), text[i + 1:].to_owned())
+        }
+        saw_incomplete_then = true
       }
     }
   }
   if unwanted {
+    if saw_incomplete_then {
+      raise ExpectedSystem
+    }
     raise MissingThen
   }
   raise MissingSeparator

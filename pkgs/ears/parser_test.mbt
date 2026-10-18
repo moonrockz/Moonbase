@@ -68,6 +68,53 @@ test "ordinary commas stay in clauses and responses" {
 }
 
 ///|
+test "THEN inside unwanted conditions does not end a clause" {
+  let conditions = [
+    "a scan completes then retries", "a scan completes, then retries", "a scan completes THEN retries then pauses",
+  ]
+  for condition in conditions {
+    for separator in [" then ", ", then "] {
+      let requirement = @ears.parse(
+        "If " + condition + separator + "the scanner shall stop.",
+      )
+      @expect.expect_all(s => {
+        s
+        .expect(requirement.trigger())
+        .to_equal(Some(@ears.Unwanted(condition)))
+        s.expect(requirement.system()).to_equal("scanner")
+        s.expect(@ears.parse(requirement.to_string())).to_equal(requirement)
+      })
+    }
+  }
+}
+
+///|
+test "Markdown columns include a first-line BOM only on the first line" {
+  let cases : Array[(String, Int32, Int32)] = [
+    ("\u{FEFF}The gauge shall reset.", 1, 2),
+    ("\u{FEFF}- The gauge shall reset.", 1, 4),
+    ("\u{FEFF}\nThe gauge shall reset.", 2, 1),
+    ("\u{FEFF}---\ntitle: Gauge\n---\nThe gauge shall reset.", 4, 1),
+  ]
+  for (source, line, column) in cases {
+    let spec = @ears.parse_markdown(source)
+    guard spec.requirements().get(0) is Some(item) else {
+      fail("missing requirement")
+    }
+    guard item.origin() is Markdown(span=Some(span), ..) else {
+      fail("missing span")
+    }
+    @expect.expect_all(s => {
+      s.expect(span.line()).to_equal(line)
+      s.expect(span.column()).to_equal(column)
+      s
+      .expect(source[span.start():span.end()].to_owned())
+      .to_equal("The gauge shall reset.")
+    })
+  }
+}
+
+///|
 fn rejection(source : String) -> @ears.ParseError raise {
   let _ = @ears.parse(source) catch { error => return error }
   fail("expected rejection: " + source)
