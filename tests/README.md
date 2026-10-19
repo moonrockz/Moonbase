@@ -59,6 +59,27 @@ mise exec -- moon test tests/mdc-laws --target native
 `supported_targets = "js+native"`; laws run on all four targets. The runner reads
 package restrictions instead of skipping the entire tests module on wasm.
 
+## Notebook tests
+
+`nbformat-acceptance/` covers cells, outputs, attachments, older and future
+minor versions, retained extension payloads, cursor paths and validation errors.
+Each scenario owns its state. These scenarios run on JavaScript and native.
+
+`nbformat-laws/` runs three properties with 600 generated cases per target.
+They check JSON and text round trips, agreement between recursive traversal,
+walk and fold, and reversible cursor moves with resolvable saved paths.
+Generators build valid cells with unique IDs, rich outputs, Unicode metadata,
+attachments and unknown payloads. Shrinking rebuilds valid notebooks from
+smaller generation choices. Seeds, sizes and shrink limits are explicit.
+The laws run on all four targets.
+
+```shell
+mise exec -- moon test pkgs/nbformat tests/nbformat-acceptance tests/nbformat-laws --target js
+mise exec -- moon test pkgs/nbformat tests/nbformat-acceptance tests/nbformat-laws --target native
+mise exec -- moon test pkgs/nbformat tests/nbformat-laws --target wasm
+mise exec -- moon test pkgs/nbformat tests/nbformat-laws --target wasm-gc
+```
+
 ## EARS tests
 
 `ears-acceptance/features/ears.feature` covers all six EARS patterns, malformed

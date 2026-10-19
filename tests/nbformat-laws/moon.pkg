@@ -1,0 +1,6 @@
+import {
+  "moonrockz/moonbase-nbformat" @nbformat,
+  "moonrockz/expect",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/shrink",
+} for "wbtest"
