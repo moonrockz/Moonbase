@@ -8,7 +8,13 @@ is 0.x, a minor release can contain breaking changes.
 
 ## [0.0.1] - 2026-10-19
 
-<!-- Highlights: replace this comment with a few sentences on what this release brings. -->
+Moonbase's first release publishes immutable Markdown documents and EARS
+requirements alongside the shared contracts, CLI, web UI and desktop shell.
+The independent `moonrockz/notebooks` module adds Jupyter and .NET Interactive
+DIB models, format-specific inspection, and shared cursors, traversal and
+immutable metadata. Jupyter support covers notebook schema 4.0 through 4.5,
+including the format used by Python nbformat 5.11. Checked usage guides and
+public API comments accompany the notebook packages.
 
 ### 🚀 Features
 
