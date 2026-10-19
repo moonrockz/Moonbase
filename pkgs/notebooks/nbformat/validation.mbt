@@ -21,9 +21,10 @@ fn optional_type(
 
 ///|
 fn validate_notebook_metadata(
-  metadata : JsonObject,
+  metadata : Metadata,
   path : String,
 ) -> Unit raise FormatError {
+  let metadata = object_at(metadata.to_json(), path)
   for key in ["kernelspec", "language_info", "kernel_info"] {
     if metadata.fields.get(key) is Some(value) {
       let nested_path = path + "." + key
@@ -70,10 +71,11 @@ fn validate_notebook_metadata(
 
 ///|
 fn validate_cell_metadata(
-  metadata : JsonObject,
+  metadata : Metadata,
   kind : String,
   path : String,
 ) -> Unit raise FormatError {
+  let metadata = object_at(metadata.to_json(), path)
   for key in ["deletable", "editable"] {
     optional_type(metadata, key, "boolean", path)
   }
@@ -137,7 +139,7 @@ fn validate_cells(
         )
       None => ()
     }
-    if cell.metadata.fields.get("name") is Some(String(name)) {
+    if cell.metadata.get("name") is Some(String(name)) {
       if names.contains(name) {
         raise DuplicateCellName(name)
       }

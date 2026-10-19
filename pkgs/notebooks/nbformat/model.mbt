@@ -107,11 +107,11 @@ pub(all) enum OutputContent {
   /// Text written to a named stream, commonly stdout or stderr.
   Stream(name~ : String, text~ : String)
   /// A MIME bundle displayed without an execution count.
-  DisplayData(data~ : MimeBundle, metadata~ : JsonObject)
+  DisplayData(data~ : MimeBundle, metadata~ : Metadata)
   /// A MIME bundle returned by execution; None denotes a null count.
   ExecuteResult(
     data~ : MimeBundle,
-    metadata~ : JsonObject,
+    metadata~ : Metadata,
     execution_count~ : ExecutionCount?
   )
   /// A failed execution with an exception name, message and ordered frames.
@@ -216,7 +216,7 @@ pub extend CellContent with @debug.Debug::{to_repr}
 /// the containing notebook enforces version-specific ID presence and uniqueness.
 struct Cell {
   id : CellId?
-  metadata : JsonObject
+  metadata : Metadata
   content : CellContent
   extensions : JsonObject
 } derive(Eq, Debug)
@@ -235,7 +235,7 @@ pub extend Cell with @debug.Debug::{to_repr}
 pub fn Cell::Cell(
   content : CellContent,
   id~ : CellId? = None,
-  metadata~ : JsonObject = { fields: {}, },
+  metadata~ : Metadata = Metadata::empty(),
 ) -> Cell raise FormatError {
   if content is Unknown(cell_type~, fields~) {
     if ["markdown", "raw", "code"].contains(cell_type) {
@@ -259,7 +259,7 @@ pub fn Cell::id(self : Cell) -> CellId? {
 
 ///|
 /// Return the immutable cell metadata object.
-pub fn Cell::metadata(self : Cell) -> JsonObject {
+pub fn Cell::metadata(self : Cell) -> Metadata {
   self.metadata
 }
 
@@ -312,7 +312,7 @@ pub fn Cell::outputs(self : Cell) -> ReadOnlyArray[Output] {
 /// preserved extension fields. The file's minor version is retained.
 struct Notebook {
   minor : Int32
-  metadata : JsonObject
+  metadata : Metadata
   cells : ReadOnlyArray[Cell]
   extensions : JsonObject
 } derive(Eq, Debug)
@@ -331,7 +331,7 @@ pub extend Notebook with @debug.Debug::{to_repr}
 pub fn Notebook::Notebook(
   cells : ReadOnlyArray[Cell],
   minor~ : Int32 = 5,
-  metadata~ : JsonObject = { fields: {}, },
+  metadata~ : Metadata = Metadata::empty(),
 ) -> Notebook raise FormatError {
   if minor < 0 {
     raise UnsupportedVersion(major=4, minor~)
@@ -356,7 +356,7 @@ pub fn Notebook::nbformat_minor(self : Notebook) -> Int32 {
 
 ///|
 /// Return immutable notebook metadata, including custom namespaces.
-pub fn Notebook::metadata(self : Notebook) -> JsonObject {
+pub fn Notebook::metadata(self : Notebook) -> Metadata {
   self.metadata
 }
 

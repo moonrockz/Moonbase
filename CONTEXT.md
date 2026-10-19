@@ -20,3 +20,7 @@ outputs; DIB notebooks contain source without stored execution results.
 
 **Attachment**:
 A named bundle of media representations associated with a cell's source.
+
+**Metadata**:
+Attributes belonging to one notebook node. An empty metadata container differs
+from a node with no metadata container. Ancestor attributes are not inherited.

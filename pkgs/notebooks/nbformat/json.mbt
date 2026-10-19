@@ -245,3 +245,10 @@ pub fn Attachments::to_json(self : Attachments) -> Json {
   }
   Json(fields)
 }
+
+///|
+fn metadata_at(value : Json, path : String) -> Metadata raise FormatError {
+  Metadata::Metadata(value) catch {
+    @notebooks.ExpectedObject => invalid(path, "object")
+  }
+}

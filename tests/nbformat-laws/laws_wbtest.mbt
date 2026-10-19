@@ -24,7 +24,7 @@ impl @shrink.Shrink for NotebookCase with fn shrink(self) {
 ///|
 fn NotebookCase::notebook(self : NotebookCase) -> @nbformat.Notebook raise {
   let cells = []
-  let metadata = @nbformat.JsonObject({
+  let metadata = @nbformat.Metadata({
     "custom": { "values": ["🌙", "Café", "目標"] },
   })
   let bundle = @nbformat.MimeBundle({
@@ -70,7 +70,7 @@ fn NotebookCase::notebook(self : NotebookCase) -> @nbformat.Notebook raise {
           @nbformat.Output::Output(
             @nbformat.OutputContent::Unknown(
               output_type="future",
-              fields=metadata,
+              fields=@nbformat.JsonObject(metadata.to_json()),
             ),
           ),
         ]
@@ -80,7 +80,11 @@ fn NotebookCase::notebook(self : NotebookCase) -> @nbformat.Notebook raise {
           outputs=ReadOnlyArray::from_array(outputs[:]),
         )
       }
-      _ => @nbformat.CellContent::Unknown(cell_type="future", fields=metadata)
+      _ =>
+        @nbformat.CellContent::Unknown(
+          cell_type="future",
+          fields=@nbformat.JsonObject(metadata.to_json()),
+        )
     }
     cells.push(@nbformat.Cell::Cell(content, id~, metadata~))
   }

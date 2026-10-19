@@ -148,7 +148,7 @@ pub fn parse(
   let mut kernel = registry.default_kernel
   let cells = []
   let pending : Array[String] = []
-  let mut metadata = Metadata::{ value: {}, }
+  let mut metadata = Metadata::empty()
   let mut found_metadata = false
   let mut i = 0
   while i < lines.length() {
@@ -165,9 +165,8 @@ pub fn parse(
           raise InvalidMetadata(line=start + 1, message=error.to_string())
       }
       metadata = Metadata::Metadata(value) catch {
-        InvalidMetadata(message~, ..) =>
-          raise InvalidMetadata(line=start + 1, message~)
-        error => raise error
+        @notebooks.ExpectedObject =>
+          raise InvalidMetadata(line=start + 1, message="expected an object")
       }
       registry = registry_from_metadata(metadata, registry)
       if cells.is_empty() && pending.iter().all(line => line.is_empty()) {
@@ -214,9 +213,8 @@ pub fn Notebook::to_string(self : Notebook) -> String raise FormatError {
   let contains_metadata_directive = self.cells
     .iter()
     .any(cell => lines(cell.source).contains("#!meta"))
-  if (self.metadata.value is Object(fields) && !fields.is_empty()) ||
-    contains_metadata_directive {
-    output.push("#!meta\n\n" + self.metadata.value.stringify() + "\n")
+  if !self.metadata.is_empty() || contains_metadata_directive {
+    output.push("#!meta\n\n" + self.metadata.to_json().stringify() + "\n")
   }
   for i, cell in self.cells {
     if cell.source.is_empty() {

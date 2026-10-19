@@ -50,6 +50,7 @@ implements the open `@notebooks.Node` trait:
 - `children()` returns immutable children in document order.
 - `kind()` classifies a notebook, cell, output, attachment or directive.
 - `source()` returns available source text, with `None` as the default.
+- `metadata()` returns node-local `Metadata?`, with `None` as the default.
 
 `CellKind` distinguishes code, Markdown, raw and unknown cells. The shared
 classification leaves the concrete format's payload intact. The traversal
@@ -128,3 +129,36 @@ Replace the module dependency `moonrockz/moonbase-nbformat` with
 remain available. Explicit cursor annotations now use
 `@nbformat.Cursor[@nbformat.Node]`, or `@notebooks.Cursor[@nbformat.Node]`.
 `Control` and `NodePath` are shared types re-exported by both format packages.
+
+## Shared metadata
+
+`Metadata(json)` requires a JSON object and raises `MetadataError::ExpectedObject`
+for another JSON type. `Metadata::empty()` creates an empty container. Use
+`get(key)`, `keys()`, `is_empty()` and `to_json()` to inspect attributes. Imports,
+lookups and exports copy nested JSON objects and arrays, so callers cannot
+mutate the stored value. A present JSON null is `Some(Null)`; an absent key is
+`None`. Key order is unspecified.
+
+`Node.metadata()` returns the node's own attributes. `Some(Metadata::empty())`
+means the node has an empty metadata container. `None` means the format defines
+no metadata container for that node. Metadata is never inherited. Use a cursor's
+`parent()` explicitly when a query needs ancestor attributes. Metadata remains
+an attribute, rather than a traversal child.
+
+| Node | Common metadata |
+| --- | --- |
+| Jupyter notebook and every cell type | `Some`, including empty objects |
+| Jupyter display_data and execute_result outputs | `Some`, including empty objects |
+| Jupyter stream, error and unknown output types; attachments | `None` |
+| DIB notebook | `Some`, including an absent or empty #!meta section |
+| DIB cell and directive | `None` |
+
+Unknown output fields remain available through the specialized output payload.
+Both format packages re-export the same `Metadata` type. Jupyter notebook,
+cell and rich-output constructors accept it, and their accessors return it.
+Jupyter's `JsonObject` remains the type for extension fields and unknown payloads.
+Replace metadata arguments built with `@nbformat.JsonObject(json)` with
+`@notebooks.Metadata(json)` or `@nbformat.Metadata(json)`. Existing
+`@dib.Metadata(json)` calls use the shared constructor and now raise
+`MetadataError`; DIB parsing continues to report `FormatError::InvalidMetadata`
+with the source line. Jupyter codecs retain field-path validation errors.

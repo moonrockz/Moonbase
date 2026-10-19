@@ -249,3 +249,49 @@ test "law: pruning and immediate stop agree with a recursive model" {
     seed=4104,
   )
 }
+
+///|
+fn[N : @notebooks.Node] own_metadata(root : N) -> @notebooks.Metadata? {
+  root.metadata()
+}
+
+///|
+test "law: shared metadata survives both format codecs and mutable exports" {
+  @expect.for_all(
+    (input : NotebookCase) => {
+      let (jupyter, dib) = input.pair()
+      let value : Json = {
+        "vendor": {
+          "choices": Json(
+            input.choices
+            .iter()
+            .map(choice => Json(choice.reinterpret_as_int()))
+            .collect(),
+          ),
+          "style": Json(input.style.reinterpret_as_int()),
+          "null": null,
+        },
+      }
+      let metadata = @notebooks.Metadata(value)
+      let jupyter = @nbformat.Notebook::Notebook(jupyter.cells(), metadata~)
+      let dib = @dib.Notebook::Notebook(dib.cells(), metadata~)
+      let reread_jupyter = @nbformat.parse(jupyter.to_string())
+      let reread_dib = @dib.parse(dib.to_string())
+      if metadata.to_json() is Object(fields) {
+        fields.clear()
+      }
+      if metadata.get("vendor") is Some(Object(fields)) {
+        fields.clear()
+      }
+      @expect.expect_all(s => {
+        s.expect(metadata.to_json()).to_equal(value)
+        s.expect(own_metadata(reread_jupyter.root())).to_equal(Some(metadata))
+        s.expect(own_metadata(reread_dib.root())).to_equal(Some(metadata))
+      })
+    },
+    count=200,
+    max_size=16,
+    max_shrinks=200,
+    seed=4105,
+  )
+}

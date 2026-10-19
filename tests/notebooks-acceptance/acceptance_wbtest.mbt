@@ -69,6 +69,14 @@ fn[N : @notebooks.Node + Eq] paths_resolve(root : N) -> Bool {
 }
 
 ///|
+fn[N : @notebooks.Node] metadata_title(root : N) -> Json? {
+  match root.metadata() {
+    Some(metadata) => metadata.get("title")
+    None => None
+  }
+}
+
+///|
 impl @moonspec.World for NotebookWorld with fn configure(self, setup) {
   setup.given1("the DIB source:", (source : @moonspec.DocString) => {
     self.state = Source(Dib(source.content))
@@ -84,6 +92,15 @@ impl @moonspec.World for NotebookWorld with fn configure(self, setup) {
         Jupyter(source) => Jupyter(@nbformat.parse(source))
       },
     )
+  })
+  setup.then1("the common notebook metadata title is {string}", (
+    expected : String,
+  ) => {
+    let title = match self.parsed() {
+      Dib(book) => metadata_title(book.root())
+      Jupyter(book) => metadata_title(book.root())
+    }
+    @expect.expect(title).to_equal(Some(Json(expected)))
   })
   setup.then1("the common cell kinds are {string}", (expected : String) => {
     let actual = match self.parsed() {

@@ -68,7 +68,9 @@ recognizes default-kernel metadata in `polyglot_notebook` and the legacy
 `dotnet_interactive` namespace. A default declared in a leading metadata
 section applies to the notebook's initial kernel.
 
-`Metadata(json)` copies an object. `metadata.get(key)` and `to_json()` return
+`Metadata` is the shared `@notebooks.Metadata` type, re-exported by this
+package. `Metadata(json)` copies an object and raises
+`@notebooks.MetadataError::ExpectedObject` for any other JSON type. `metadata.get(key)` and `to_json()` return
 defensive copies, including nested arrays and objects. Unknown metadata fields
 survive parsing and writing.
 

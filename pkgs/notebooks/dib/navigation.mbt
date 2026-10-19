@@ -1,6 +1,6 @@
 ///|
 /// Shared navigation types. Explicit cursor annotations use Cursor[Node].
-pub using @notebooks {type Cursor, type NodePath, type Control}
+pub using @notebooks {type Cursor, type NodePath, type Control, type Metadata}
 
 ///|
 /// A concrete DIB traversal node. Notebook children are cells in source
@@ -140,4 +140,19 @@ pub fn Notebook::cells_for_kernel(
   ReadOnlyArray::from_iter(
     self.cells.iter().filter(cell => cell.kernel == kernel),
   )
+}
+
+///|
+/// Return this node's own metadata. Some(empty) retains an empty container;
+/// None means this node has none. Ancestor metadata is never inherited.
+pub fn Node::metadata(self : Node) -> Metadata? {
+  match self {
+    Notebook(book) => Some(book.metadata())
+    Cell(_) | Directive(_) => None
+  }
+}
+
+///|
+pub impl @notebooks.Node for Node with fn metadata(self) {
+  self.metadata()
 }

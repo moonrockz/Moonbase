@@ -15,7 +15,8 @@ Feature: Navigate notebooks through common and specialized APIs
       example()
       """
     When the notebook is parsed
-    Then the common cell kinds are "markdown,code,code"
+    Then the common notebook metadata title is "Polyglot"
+    And the common cell kinds are "markdown,code,code"
     And common cursor paths resolve to their concrete nodes
     And the specialized directive is "share" with arguments "--from fsharp x"
     And the custom kernel alias finds source "example()"
@@ -24,12 +25,13 @@ Feature: Navigate notebooks through common and specialized APIs
   Scenario: Navigate a Jupyter notebook and inspect its outputs
     Given the Jupyter JSON:
       """json
-      {"nbformat":4,"nbformat_minor":5,"metadata":{},"cells":[
+      {"nbformat":4,"nbformat_minor":5,"metadata":{"title":"Jupyter"},"cells":[
         {"id":"intro","cell_type":"markdown","metadata":{},"source":"# Results","attachments":{"plot.png":{"image/png":"YWJj"}}},
         {"id":"calculation","cell_type":"code","metadata":{},"source":"1 + 1","execution_count":1,"outputs":[{"output_type":"stream","name":"stdout","text":"2"}]}]}
       """
     When the notebook is parsed
-    Then the common cell kinds are "markdown,code"
+    Then the common notebook metadata title is "Jupyter"
+    And the common cell kinds are "markdown,code"
     And common cursor paths resolve to their concrete nodes
     And specialized Jupyter navigation finds the stream and attachment
 

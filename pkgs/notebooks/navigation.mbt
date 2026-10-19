@@ -52,6 +52,15 @@ pub(open) trait Node {
   fn kind(Self) -> NodeKind
   /// Return available source text. Defaults to None for nodes without source.
   fn source(Self) -> String? = _
+  /// Return this node's own metadata, without inheriting from its ancestors.
+  /// Some(empty) means an available empty container; None means no container.
+  /// Defaults to None so implementations without metadata need no override.
+  fn metadata(Self) -> Metadata? = _
+}
+
+///|
+impl Node with fn metadata(_self) {
+  None
 }
 
 ///|

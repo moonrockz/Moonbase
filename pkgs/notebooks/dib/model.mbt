@@ -213,54 +213,6 @@ pub fn KernelRegistry::standard() -> KernelRegistry {
 }
 
 ///|
-fn copy_json(value : Json) -> Json {
-  match value {
-    Object(fields) => Json(fields.map((_, value) => copy_json(value)))
-    Array(items) => Json(items.map(copy_json))
-    _ => value
-  }
-}
-
-///|
-/// An immutable document metadata object. Imports and exports defensively
-/// copy nested JSON arrays and objects; custom keys are retained.
-struct Metadata {
-  value : Json
-} derive(Eq, Debug)
-
-///|
-pub extend Metadata with Eq::{equal, not_equal}
-
-///|
-pub extend Metadata with @debug.Debug::{to_repr}
-
-///|
-/// Require an object and deep-copy its JSON graph. Raise InvalidMetadata
-/// for another JSON type. Kernel registrations are interpreted separately
-/// when a notebook is parsed or constructed.
-pub fn Metadata::Metadata(value : Json) -> Metadata raise FormatError {
-  guard value is Object(_) else {
-    raise InvalidMetadata(line=1, message="expected an object")
-  }
-  { value: copy_json(value), }
-}
-
-///|
-/// Look up an exact metadata key, returning an independent JSON value or None.
-pub fn Metadata::get(self : Metadata, name : String) -> Json? {
-  match self.value {
-    Object(fields) => fields.get(name).map(copy_json)
-    _ => None
-  }
-}
-
-///|
-/// Export an independent metadata object that callers may mutate safely.
-pub fn Metadata::to_json(self : Metadata) -> Json {
-  copy_json(self.value)
-}
-
-///|
 /// An immutable source cell with a kernel name. Sources normalize line
 /// endings and trim only empty boundary lines. Notebook construction resolves
 /// kernel aliases; a standalone cell may still contain an alias.
@@ -397,7 +349,7 @@ pub extend Notebook with @debug.Debug::{to_repr}
 /// or unregistered cell kernels. Empty cells remain until serialization.
 pub fn Notebook::Notebook(
   cells : ReadOnlyArray[Cell],
-  metadata~ : Metadata = { value: {}, },
+  metadata~ : Metadata = Metadata::empty(),
   registry~ : KernelRegistry = KernelRegistry::standard(),
 ) -> Notebook raise FormatError {
   let registry = registry_from_metadata(metadata, registry)

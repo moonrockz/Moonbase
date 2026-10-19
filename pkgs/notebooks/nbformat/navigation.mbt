@@ -47,7 +47,7 @@ pub fn Node::children(self : Node) -> ReadOnlyArray[Node] {
 
 ///|
 /// Shared navigation types. Explicit cursor annotations use Cursor[Node].
-pub using @notebooks {type Cursor, type NodePath, type Control}
+pub using @notebooks {type Cursor, type NodePath, type Control, type Metadata}
 
 ///|
 /// Classify this node for format-independent traversal without converting
@@ -146,4 +146,26 @@ pub fn[A] Notebook::fold(
   f : (A, Cursor[Node]) -> A,
 ) -> A {
   @notebooks.fold(self.root(), init, f)
+}
+
+///|
+/// Return this node's own metadata. Some(empty) retains an empty container;
+/// None means this node has none. Ancestor metadata is never inherited.
+pub fn Node::metadata(self : Node) -> Metadata? {
+  match self {
+    Notebook(book) => Some(book.metadata())
+    Cell(cell) => Some(cell.metadata())
+    Output(output) =>
+      match output.content() {
+        DisplayData(metadata~, ..) | ExecuteResult(metadata~, ..) =>
+          Some(metadata)
+        _ => None
+      }
+    Attachment(_) => None
+  }
+}
+
+///|
+pub impl @notebooks.Node for Node with fn metadata(self) {
+  self.metadata()
 }

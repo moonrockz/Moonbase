@@ -71,7 +71,7 @@ Access the complete variant with `cell.content()`, or use `source()`,
 whose type is not code.
 
 `OutputContent` distinguishes `Stream`, `DisplayData`, `ExecuteResult`, `Error`
-and `Unknown`. Rich outputs use `MimeBundle` and `JsonObject` metadata. Error
+and `Unknown`. Rich outputs use `MimeBundle` and shared `Metadata`. Error
 outputs retain a read-only sequence of traceback frames. Stream names remain
 strings, as allowed by the schema. `ExecutionCount(n)` validates a nonnegative
 integer; `ExecutionCount::from_json` also accepts numeric JSON representations
@@ -86,7 +86,8 @@ Keeping a notebook, cell or cursor therefore saves an immutable value.
 
 ## Metadata and extensions
 
-Notebook, cell and rich-output metadata use `JsonObject`. Known metadata fields
+Notebook, cell and rich-output metadata use the shared `@notebooks.Metadata`
+type, re-exported here as `Metadata`. Known metadata fields
 are checked when present, including kernel and language names, authors, cell
 tags, visibility flags and execution timestamps' string types. Empty metadata
 objects are valid. Custom metadata can contain arbitrary JSON.

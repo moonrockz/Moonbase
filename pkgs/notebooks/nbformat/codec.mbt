@@ -25,7 +25,7 @@ pub fn Notebook::from_json(value : Json) -> Notebook raise FormatError {
   if major != 4 {
     raise UnsupportedVersion(major~, minor~)
   }
-  let metadata = object_at(field(object, "metadata", "$"), "$.metadata")
+  let metadata = metadata_at(field(object, "metadata", "$"), "$.metadata")
   validate_notebook_metadata(metadata, "$.metadata")
   let raw_cells = array_at(field(object, "cells", "$"), "$.cells")
   let cells = ReadOnlyArray::from_array(
@@ -78,7 +78,10 @@ fn cell_at(
       invalid(path + ".id", "required cell ID in nbformat 4.5 and later")
     None => None
   }
-  let metadata = object_at(field(object, "metadata", path), path + ".metadata")
+  let metadata = metadata_at(
+    field(object, "metadata", path),
+    path + ".metadata",
+  )
   validate_cell_metadata(metadata, kind, path + ".metadata")
   let keys = ["cell_type", "id", "metadata"]
   let content = match kind {
@@ -142,11 +145,16 @@ fn output_at(value : Json, path : String) -> Output raise FormatError {
       keys.push("data")
       keys.push("metadata")
       let data = mime_at(field(object, "data", path), path + ".data")
-      let metadata = object_at(
+      let metadata = metadata_at(
         field(object, "metadata", path),
         path + ".metadata",
       )
-      optional_type(metadata, "isolated", "boolean", path + ".metadata")
+      optional_type(
+        object_at(metadata.to_json(), path + ".metadata"),
+        "isolated",
+        "boolean",
+        path + ".metadata",
+      )
       if kind == "display_data" {
         DisplayData(data~, metadata~)
       } else {

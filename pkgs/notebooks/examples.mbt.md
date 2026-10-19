@@ -5,7 +5,7 @@ under those aliases, and `moonrockz/expect` as `@expect`. Each `mbt check`
 block below runs as a documentation test.
 
 The shared engine uses each format's concrete node type. Generic algorithms
-use `Node.kind()` and `source()`; specialized algorithms pattern match the
+use `Node.kind()`, `source()` and `metadata()`; specialized algorithms pattern match the
 node returned by `Cursor[N].node()`.
 
 ## Use one algorithm with both formats
@@ -229,7 +229,7 @@ and cursor positions remain immutable throughout the fold.
 
 A consumer-defined format can use the engine without changing either built-in
 format. Return immutable children in stable order and avoid cycles. The
-`source` method is optional and defaults to `None`.
+`source` and `metadata` methods are optional and default to `None`.
 
 ```mbt check
 ///|
@@ -272,6 +272,88 @@ test "example: consumer-defined tree with typed cursors" {
     s.expect(source).to_equal("run()")
     s.expect(example_code_sources(root)).to_equal(["run()"])
     s.expect(child.path().to_string()).to_equal("$[0]")
+  })
+}
+```
+
+## Query metadata in either format
+
+Metadata belongs to the node being inspected. `None` means the node has no
+metadata container; `Some(empty)` means its container has no keys. Custom keys
+are retained and JSON lookups return independent copies. Key order is unspecified.
+
+```mbt check
+///|
+fn[N : @notebooks.Node] example_title(root : N) -> Json? {
+  match root.metadata() {
+    Some(metadata) => metadata.get("title")
+    None => None
+  }
+}
+
+///|
+test "example: shared metadata construction and generic lookup" {
+  let metadata = @notebooks.Metadata({
+    "title": "Results",
+    "vendor": { "tags": ["review"] },
+    "optional": null,
+  })
+  let jupyter = @nbformat.Notebook::Notebook([], metadata~)
+  let dib = @dib.Notebook::Notebook([], metadata~)
+  @expect.expect_all(s => {
+    s.expect(example_title(jupyter.root())).to_equal(Some(Json("Results")))
+    s.expect(example_title(dib.root())).to_equal(Some(Json("Results")))
+    s.expect(metadata.keys().contains("vendor")).to_be_true()
+    s.expect(metadata.get("optional")).to_equal(Some(null))
+    s.expect(metadata.get("absent")).to_equal(None)
+    s.expect(@notebooks.Metadata::empty().is_empty()).to_be_true()
+    s.expect(jupyter.metadata()).to_equal(dib.metadata())
+  })
+  guard metadata.to_json() is Object(fields) else { fail("expected object") }
+  fields.clear()
+  @expect.expect(metadata.get("title")).to_equal(Some(Json("Results")))
+}
+```
+
+Jupyter notebook, cell and rich-output constructors accept this shared type.
+Jupyter `JsonObject` still represents extension fields and unknown payloads.
+DIB metadata applies to the document; cells and directives have no container.
+Jupyter stream, error and unknown output nodes and attachments return `None`.
+
+## Read ancestor metadata explicitly
+
+No automatic inheritance occurs. When your query needs document attributes,
+keep the cursor's ancestry and request the parent metadata explicitly.
+
+```mbt check
+///|
+test "example: local attributes differ from ancestor attributes" {
+  let dib = @dib.parse("#!meta\n{\"title\":\"Results\"}\n#!csharp\nrun()")
+  guard dib.cursor().first_child() is Some(cell) else { fail("expected cell") }
+  guard cell.parent() is Some(parent) else { fail("expected document") }
+  let jupyter = @nbformat.Notebook::from_json({
+    "nbformat": 4,
+    "nbformat_minor": 5,
+    "metadata": { "title": "Results" },
+    "cells": [
+      {
+        "id": "intro",
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": "# Results",
+      },
+    ],
+  })
+  guard jupyter.cursor().first_child() is Some(markdown) else {
+    fail("expected cell")
+  }
+  @expect.expect_all(s => {
+    s.expect(cell.node().metadata()).to_equal(None)
+    s.expect(example_title(parent.node())).to_equal(Some(Json("Results")))
+    s
+    .expect(markdown.node().metadata())
+    .to_equal(Some(@notebooks.Metadata::empty()))
+    s.expect(example_title(markdown.node())).to_equal(None)
   })
 }
 ```

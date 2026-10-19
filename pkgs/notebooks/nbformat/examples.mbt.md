@@ -33,7 +33,7 @@ values normalize to strings. `None` represents a null execution count.
 ```mbt check
 ///|
 test "example: construct cells and stored outputs" {
-  let metadata = @nbformat.JsonObject({ "isolated": false })
+  let metadata = @nbformat.Metadata({ "isolated": false })
   let data = @nbformat.MimeBundle({
     "text/plain": ["answer: ", "42"],
     "application/json": { "answer": 42 },
@@ -66,7 +66,7 @@ test "example: construct cells and stored outputs" {
     @nbformat.Cell::Cell(
       @nbformat.Raw(source="\\alpha", attachments=None),
       id=Some(@nbformat.CellId("latex")),
-      metadata=@nbformat.JsonObject({ "format": "text/latex" }),
+      metadata=@nbformat.Metadata({ "format": "text/latex" }),
     ),
   ]
   let book = @nbformat.Notebook::Notebook(cells)
@@ -102,7 +102,7 @@ test "example: attachments and independent metadata exports" {
     "plot.png": { "image/png": ["YW", "Jj"] },
     "data.json": { "application/json": [1, 2] },
   })
-  let metadata = @nbformat.JsonObject({ "vendor": { "tags": ["example"] } })
+  let metadata = @nbformat.Metadata({ "vendor": { "tags": ["example"] } })
   let cell = @nbformat.Cell::Cell(
     @nbformat.Markdown(
       source="![plot](attachment:plot.png)",

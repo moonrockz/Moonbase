@@ -22,9 +22,10 @@ impl @notebooks.Node for OtherNode with fn kind(self) {
 }
 
 ///|
-// Source intentionally uses the trait's default implementation.
+// Source and metadata intentionally use the trait's default implementation.
 test "consumer-defined notebook nodes can use shared cursors and folds" {
   let root = OtherNode::Document([Snippet("source")])
+  @expect.expect(own_metadata(root)).to_equal(None)
   let cursor = @notebooks.Cursor(root)
   guard cursor.first_child() is Some(child) else { fail("no child") }
   @expect.expect_all(s => {
