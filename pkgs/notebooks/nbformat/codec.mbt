@@ -1,4 +1,8 @@
 ///|
+/// Read notebook JSON into an immutable v4 document. Normalize multiline
+/// strings and preserve unknown fields, cell types and output types.
+/// Raise InvalidJson for malformed JSON, UnsupportedVersion for another
+/// major version, or a typed FormatError for invalid structure or identities.
 pub fn parse(source : String) -> Notebook raise FormatError {
   let value = @json.parse(source) catch {
     error => raise InvalidJson(error.to_string())
@@ -7,6 +11,10 @@ pub fn parse(source : String) -> Notebook raise FormatError {
 }
 
 ///|
+/// Validate an existing JSON notebook and copy all mutable value graphs.
+/// Accept v4 minor versions, requiring cell IDs from 4.5 onward. Raise
+/// FormatError on invalid fields, unsupported major versions or duplicate
+/// IDs/names. Later mutation of value cannot change the notebook.
 pub fn Notebook::from_json(value : Json) -> Notebook raise FormatError {
   let object = object_at(value, "$")
   let major = integer_at(field(object, "nbformat", "$"), "$.nbformat")
@@ -173,6 +181,9 @@ fn output_at(value : Json, path : String) -> Output raise FormatError {
 }
 
 ///|
+/// Export an independent notebook JSON object, retaining version numbers,
+/// metadata and extension payloads. Multiline values use normalized strings.
+/// Mutating the exported object does not alter this notebook.
 pub fn Notebook::to_json(self : Notebook) -> Json {
   let fields = self.extensions.fields.copy()
   fields["nbformat"] = 4
@@ -183,13 +194,16 @@ pub fn Notebook::to_json(self : Notebook) -> Json {
 }
 
 ///|
-/// Emit normalized multiline strings. Whitespace, key order and line splitting
-/// from the input are not retained; arbitrary extension values are retained.
+/// Serialize notebook JSON with normalized multiline strings. Preserve
+/// metadata and extensions, but not original whitespace, key order or line
+/// splitting. The result can be passed to parse.
 pub fn Notebook::to_string(self : Notebook) -> String {
   self.to_json().stringify()
 }
 
 ///|
+/// Export an independent cell object, including its discriminator, optional
+/// ID, metadata, typed content and preserved fields. Text is normalized.
 pub fn Cell::to_json(self : Cell) -> Json {
   let fields = match self.content {
     Unknown(fields~, ..) => fields.fields.copy()
@@ -220,6 +234,8 @@ pub fn Cell::to_json(self : Cell) -> Json {
 }
 
 ///|
+/// Export an independent output object with its discriminator, typed
+/// payload and preserved fields. Text is normalized; JSON MIME data is retained.
 pub fn Output::to_json(self : Output) -> Json {
   let fields = match self.content {
     Unknown(fields~, ..) => fields.fields.copy()

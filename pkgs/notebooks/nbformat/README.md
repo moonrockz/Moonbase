@@ -9,6 +9,22 @@ Add the `moonrockz/notebooks` module to `moon.mod` and import its
 `moonrockz/notebooks/nbformat` package as `@nbformat` in `moon.pkg`.
 The module supports wasm, wasm-gc, JavaScript and native targets.
 
+The [runnable usage guide](examples.mbt.md) contains complete, tested examples
+for reading, construction, all output types, attachments, metadata, navigation,
+errors, version compatibility, extensions and editing exported copies.
+The [shared navigation guide](../examples.mbt.md) covers cross-format queries
+and consumer-defined node contracts.
+
+## Library and file format versions
+
+The upstream Python library's version and the notebook file format version
+are separate. The `nbformat` 5.11 releases still use notebook format **4.5**,
+represented in JSON as `"nbformat": 4` and `"nbformat_minor": 5`.
+This package supports that file format. See the
+[5.11.1 format definitions](https://github.com/jupyter/nbformat/blob/v5.11.1/nbformat/v4/nbbase.py#L17-L30)
+and its [4.5 schema](https://github.com/jupyter/nbformat/blob/v5.11.1/nbformat/v4/nbformat.v4.5.schema.json).
+The library release number does not belong in the notebook's version fields.
+
 ## Read and write
 
 ```moonbit

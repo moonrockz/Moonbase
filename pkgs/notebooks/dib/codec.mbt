@@ -128,8 +128,12 @@ fn registry_from_metadata(
 }
 
 ///|
-/// Only exact registered selectors at column zero split cells. Other magic
-/// commands remain source. A first #!meta section contains document metadata.
+/// Read a DIB source notebook without executing it. Registered, exact
+/// column-zero selectors start cells; other directives remain source. Read
+/// the first exact #!meta section as JSON metadata and apply its registrations.
+/// Normalize line endings, trim empty boundary lines and omit empty sections;
+/// an empty document yields one empty cell. Accept a leading BOM.
+/// Raise FormatError for invalid metadata or conflicting kernel registrations.
 pub fn parse(
   source : String,
   registry~ : KernelRegistry = KernelRegistry::standard(),
@@ -199,8 +203,12 @@ pub fn parse(
 }
 
 ///|
-/// Normalize separators and omit empty cells, following the DIB writer.
-/// The same registry is needed when custom kernels come from the environment.
+/// Serialize normalized DIB source using canonical kernel selectors.
+/// Omit empty cells and retain document metadata. Emit a metadata header
+/// when needed to preserve later #!meta lines as source. Raise
+/// UnrepresentableSource if embedded registered selectors would split a cell.
+/// Custom kernels supplied only by the environment require the same registry
+/// on subsequent reads; the writer does not inject those registrations.
 pub fn Notebook::to_string(self : Notebook) -> String raise FormatError {
   let output = []
   let contains_metadata_directive = self.cells

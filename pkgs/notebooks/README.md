@@ -24,6 +24,24 @@ All packages support wasm, wasm-gc, JavaScript and native targets.
 See the [Jupyter API](nbformat/README.md) and [DIB API](dib/README.md) for
 format-specific codecs and constraints.
 
+## Runnable usage guides
+
+The following guides contain complete examples with assertions. MoonBit
+compiles and runs their `mbt check` blocks as documentation tests, and
+`mise run test` includes them on all four targets.
+
+| Guide | Recipes |
+| --- | --- |
+| [Shared navigation](examples.mbt.md) | Cross-format queries, cursor moves, saved paths, prune/stop callbacks, folds, subtree roots and consumer-defined formats |
+| [Jupyter notebooks](nbformat/examples.mbt.md) | Reading, construction, rich outputs, attachments, immutable metadata, ID lookup, errors, extensions and edits |
+| [DIB notebooks](dib/examples.mbt.md) | Selectors, aliases, construction, custom environments, metadata, directive navigation, errors and empty-cell normalization |
+
+Run all usage guides and package tests on one target:
+
+```shell
+mise exec -- moon test pkgs/notebooks pkgs/notebooks/nbformat pkgs/notebooks/dib --target js --deny-warn
+```
+
 ## Shared navigation with concrete payloads
 
 Each format has its own `Notebook`, `Cell` and `Node` values. Its `Node`

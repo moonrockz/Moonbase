@@ -7,6 +7,19 @@ Use `tests/<area>-acceptance/` for Moonspec step definitions and Gherkin feature
 Use `tests/<area>-laws/` for generated properties. Keep unit tests and implementation
 regressions beside their production package.
 
+## Notebook usage examples
+
+The three notebook packages contain `examples.mbt.md` guides whose `mbt check`
+blocks are executable documentation tests. They exercise the public APIs for
+shared traversal, Jupyter construction and edits, DIB custom registries and
+directives, immutable exports, error handling and format normalization.
+Selected constructor doc comments also contain checked examples.
+`mise run test` discovers these tests with the package tests on all targets.
+
+```shell
+mise exec -- moon test pkgs/notebooks pkgs/notebooks/nbformat pkgs/notebooks/dib --target js --deny-warn
+```
+
 ## MDC acceptance tests
 
 `mdc-acceptance/features/mdc.feature` covers metadata and Markdown parsing,

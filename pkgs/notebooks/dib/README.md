@@ -5,6 +5,11 @@
 [code-submission parser](https://github.com/dotnet/interactive/blob/main/src/Microsoft.DotNet.Interactive.Documents/CodeSubmission.cs)
 and its [format tests](https://github.com/dotnet/interactive/blob/main/src/Microsoft.DotNet.Interactive.Documents.Tests/CodeSubmissionFormatTests.cs).
 
+The [runnable usage guide](examples.mbt.md) contains complete, tested examples
+for parsing, construction, custom registries, document metadata, directive
+navigation, errors and normalization. The
+[shared navigation guide](../examples.mbt.md) covers generic walks and folds.
+
 ```moonbit
 let book = @dib.parse("#!markdown\n# Results\n#!csharp\n1 + 1\n")
 let code = book.cells_for_kernel("c#")
