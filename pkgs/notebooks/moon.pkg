@@ -1,0 +1,10 @@
+import {
+  "moonbitlang/core/debug",
+}
+
+import {
+  "moonrockz/notebooks",
+  "moonrockz/notebooks/nbformat",
+  "moonrockz/notebooks/dib",
+  "moonrockz/expect",
+} for "test"

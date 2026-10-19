@@ -63,6 +63,7 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 - `pkgs/contracts` (`moonrockz/moonbase-contracts`) holds the commands the CLI, the web UI and the desktop shell share. `version()` matches the workspace version.
 - `pkgs/mdc` (`moonrockz/moonbase-mdc`) adds YAML frontmatter to cmark documents and exposes immutable cursors, visitors, folds and bottom-up reduction for downstream format modules such as OKF.
 - `pkgs/ears` (`moonrockz/moonbase-ears`) parses immutable EARS requirements and extracts specifications from plain text, Markdown and existing MDC documents, retaining diagnostics and source origins.
+- `pkgs/notebooks` (`moonrockz/notebooks`) provides shared typed cursors, navigation and traversal. Its `nbformat` package represents Jupyter v4 notebooks, and `dib` represents .NET Interactive source notebooks with kernel selectors, metadata and directives. This module deliberately omits the `moonbase-` prefix so it can move to its own repository.
 - `tests` (`moonrockz/moonbase-tests`) contains acceptance suites and property laws. It is a workspace member and is excluded from both publish lists.
 - `apps/cli` (`moonrockz/moonbase-cli`) is the `moonbase` command. `preferred_target` is `wasm`, so `moonx` runs it.
 - `apps/web` (`moonrockz/moonbase-web`) is the Rabbita page. It is JavaScript only and mounts into the element `app`.
@@ -72,7 +73,7 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 
 ## Release process
 
-Moonbase publishes to mooncakes.io and GitHub Releases, and records every release in `CHANGELOG.md`. The published modules are `moonrockz/moonbase-contracts`, `moonrockz/moonbase-mdc`, `moonrockz/moonbase-ears`, `moonrockz/moonbase-cli`, `moonrockz/moonbase-web` and `moonrockz/moonbase-desktop`.
+Moonbase publishes to mooncakes.io and GitHub Releases, and records every release in `CHANGELOG.md`. The published modules are `moonrockz/moonbase-contracts`, `moonrockz/moonbase-mdc`, `moonrockz/moonbase-ears`, `moonrockz/notebooks`, `moonrockz/moonbase-cli`, `moonrockz/moonbase-web` and `moonrockz/moonbase-desktop`.
 
 - `mise run release:status` checks that main, the tags, the GitHub release and mooncakes.io agree. Each problem it prints names the command that fixes it.
 - All modules share one version. The root `moon.mod` is the source of truth. `mise run validate:versions` fails when a module, a sibling import or a `version()` string has another version. `moonx scripts/versions.mbtx set X.Y.Z` rewrites them. The first release is `0.0.1`.

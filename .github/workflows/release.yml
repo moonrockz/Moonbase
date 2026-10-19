@@ -43,6 +43,7 @@ on:
       - pkgs/contracts/**
       - pkgs/mdc/**
       - pkgs/ears/**
+      - pkgs/notebooks/**
       - .config/mise/config.toml
       - moon.mod
       - CHANGELOG.md
