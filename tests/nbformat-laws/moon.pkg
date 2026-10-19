@@ -1,5 +1,5 @@
 import {
-  "moonrockz/moonbase-nbformat" @nbformat,
+  "moonrockz/notebooks/nbformat",
   "moonrockz/expect",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/shrink",

@@ -1,11 +1,12 @@
 import {
+  "moonrockz/notebooks",
   "moonbitlang/core/json",
   "moonbitlang/core/debug",
   "moonbitlang/core/double",
 }
 
 import {
-  "moonrockz/moonbase-nbformat" @nbformat,
+  "moonrockz/notebooks/nbformat",
   "moonbitlang/core/json",
   "moonrockz/expect",
 } for "test"

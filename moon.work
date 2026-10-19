@@ -3,7 +3,7 @@ members = [
   "./pkgs/contracts",
   "./pkgs/mdc",
   "./pkgs/ears",
-  "./pkgs/nbformat",
+  "./pkgs/notebooks",
   "./apps/cli",
   "./apps/web",
   "./apps/desktop",

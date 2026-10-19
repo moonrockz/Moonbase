@@ -228,7 +228,7 @@ let publish_list : Array[(String, String)] = [
   ("pkgs/contracts", "moonrockz/moonbase-contracts"),
   ("pkgs/mdc", "moonrockz/moonbase-mdc"),
   ("pkgs/ears", "moonrockz/moonbase-ears"),
-  ("pkgs/nbformat", "moonrockz/moonbase-nbformat"),
+  ("pkgs/notebooks", "moonrockz/notebooks"),
   ("apps/cli", "moonrockz/moonbase-cli"),
   ("apps/web", "moonrockz/moonbase-web"),
   ("apps/desktop", "moonrockz/moonbase-desktop"),

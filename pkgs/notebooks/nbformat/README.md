@@ -1,12 +1,13 @@
 # Jupyter notebooks
 
-`moonrockz/moonbase-nbformat` represents the
+`moonrockz/notebooks/nbformat` represents the
 [Jupyter notebook format](https://nbformat.readthedocs.io/en/latest/format_description.html)
 as immutable MoonBit values. It reads and writes nbformat 4.x JSON and provides
 cursors and depth-first traversal over cells, outputs and attachments.
 
-Add `moonrockz/moonbase-nbformat` to `moon.mod` and import it as `@nbformat`
-in `moon.pkg`. The module supports wasm, wasm-gc, JavaScript and native targets.
+Add the `moonrockz/notebooks` module to `moon.mod` and import its
+`moonrockz/notebooks/nbformat` package as `@nbformat` in `moon.pkg`.
+The module supports wasm, wasm-gc, JavaScript and native targets.
 
 ## Read and write
 
@@ -101,6 +102,10 @@ let node_count = book.fold(0, (count, _cursor) => count + 1)
 ```
 
 `Node` contains `Notebook`, `Cell`, `Output` and named `Attachment` variants.
+It implements the shared `@notebooks.Node` contract. Its cursors are
+`@notebooks.Cursor[Node]`, preserving Jupyter payloads while using the same
+navigation and traversal engine as DIB. The package re-exports the shared
+`Cursor`, `Control` and `NodePath` types.
 Notebook children are cells in document order. Code-cell children are outputs
 in execution order. Markdown and raw cell children are attachments in lexical
 filename order. Outputs and attachments are leaves. Metadata and MIME payloads

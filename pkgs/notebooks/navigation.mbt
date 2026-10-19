@@ -1,41 +1,45 @@
 ///|
-/// The notebook tree contains cells, their outputs, and named attachments.
-/// Metadata and MIME values are accessed through their immutable objects.
-pub(all) enum Node {
-  Notebook(Notebook)
-  Cell(Cell)
-  Output(Output)
-  Attachment(name~ : String, data~ : MimeBundle)
+/// Common classifications retain each format's concrete node values.
+pub(all) enum CellKind {
+  Code
+  Markdown
+  Raw
+  Unknown(String)
 } derive(Eq, Debug)
 
 ///|
-pub extend Node with Eq::{equal, not_equal}
+pub extend CellKind with Eq::{equal, not_equal}
 
 ///|
-pub extend Node with @debug.Debug::{to_repr}
+pub extend CellKind with @debug.Debug::{to_repr}
 
 ///|
-pub fn Notebook::root(self : Notebook) -> Node {
-  Notebook(self)
+pub(all) enum NodeKind {
+  Notebook
+  Cell(CellKind)
+  Output(String)
+  Attachment(String)
+  Directive(String)
+} derive(Eq, Debug)
+
+///|
+pub extend NodeKind with Eq::{equal, not_equal}
+
+///|
+pub extend NodeKind with @debug.Debug::{to_repr}
+
+///|
+/// Implement for a stable immutable notebook tree with ordered children.
+/// The concrete Self type retains all format-specific payloads.
+pub(open) trait Node {
+  fn children(Self) -> ReadOnlyArray[Self]
+  fn kind(Self) -> NodeKind
+  fn source(Self) -> String? = _
 }
 
 ///|
-/// Cells and outputs retain document order. Attachments use filename order.
-pub fn Node::children(self : Node) -> ReadOnlyArray[Node] {
-  match self {
-    Notebook(book) => book.cells.map(cell => Node::Cell(cell))
-    Cell(cell) =>
-      match cell.content {
-        Code(outputs~, ..) => outputs.map(output => Node::Output(output))
-        Markdown(attachments=Some(attachments), ..)
-        | Raw(attachments=Some(attachments), ..) =>
-          attachments.entries.map(entry => {
-            Attachment(name=entry.0, data=entry.1)
-          })
-        _ => []
-      }
-    Output(_) | Attachment(_) => []
-  }
+impl Node with fn source(_self) {
+  None
 }
 
 ///|
@@ -66,8 +70,8 @@ pub fn NodePath::to_string(self : NodePath) -> String {
 }
 
 ///|
-pub fn Node::at(self : Node, path : NodePath) -> Node? {
-  let mut current = self
+pub fn[N : Node] at(root : N, path : NodePath) -> N? {
+  let mut current = root
   for index in path.indices {
     guard current.children().get(index) is Some(child) else { return None }
     current = child
@@ -76,46 +80,36 @@ pub fn Node::at(self : Node, path : NodePath) -> Node? {
 }
 
 ///|
-priv enum CursorContext {
+priv enum CursorContext[N] {
   Root
-  Child(parent~ : Cursor, siblings~ : ReadOnlyArray[Node], index~ : Int32)
+  Child(parent~ : Cursor[N], siblings~ : ReadOnlyArray[N], index~ : Int32)
 }
 
 ///|
 /// Moves return new positions. Retaining a cursor saves its entire context.
-struct Cursor {
-  node : Node
-  context : CursorContext
+struct Cursor[N] {
+  node : N
+  context : CursorContext[N]
   depth : Int32
 }
 
 ///|
-pub fn Cursor::Cursor(root : Node) -> Cursor {
+pub fn[N] Cursor::Cursor(root : N) -> Cursor[N] {
   { node: root, context: Root, depth: 0, }
 }
 
 ///|
-pub fn Notebook::cursor(self : Notebook) -> Cursor {
-  Cursor(self.root())
-}
-
-///|
-pub fn Node::cursor(self : Node) -> Cursor {
-  Cursor(self)
-}
-
-///|
-pub fn Cursor::node(self : Cursor) -> Node {
+pub fn[N] Cursor::node(self : Cursor[N]) -> N {
   self.node
 }
 
 ///|
-pub fn Cursor::depth(self : Cursor) -> Int32 {
+pub fn[N] Cursor::depth(self : Cursor[N]) -> Int32 {
   self.depth
 }
 
 ///|
-pub fn Cursor::path(self : Cursor) -> NodePath {
+pub fn[N] Cursor::path(self : Cursor[N]) -> NodePath {
   let indices = []
   let mut current = self
   while current.context is Child(parent~, index~, ..) {
@@ -126,7 +120,7 @@ pub fn Cursor::path(self : Cursor) -> NodePath {
 }
 
 ///|
-pub fn Cursor::parent(self : Cursor) -> Cursor? {
+pub fn[N] Cursor::parent(self : Cursor[N]) -> Cursor[N]? {
   match self.context {
     Root => None
     Child(parent~, ..) => Some(parent)
@@ -134,11 +128,11 @@ pub fn Cursor::parent(self : Cursor) -> Cursor? {
 }
 
 ///|
-fn Cursor::child_at(
-  self : Cursor,
-  siblings : ReadOnlyArray[Node],
+fn[N] Cursor::child_at(
+  self : Cursor[N],
+  siblings : ReadOnlyArray[N],
   index : Int32,
-) -> Cursor {
+) -> Cursor[N] {
   {
     node: siblings[index],
     context: Child(parent=self, siblings~, index~),
@@ -147,7 +141,7 @@ fn Cursor::child_at(
 }
 
 ///|
-pub fn Cursor::first_child(self : Cursor) -> Cursor? {
+pub fn[N : Node] Cursor::first_child(self : Cursor[N]) -> Cursor[N]? {
   let children = self.node.children()
   if children.is_empty() {
     None
@@ -157,7 +151,7 @@ pub fn Cursor::first_child(self : Cursor) -> Cursor? {
 }
 
 ///|
-pub fn Cursor::last_child(self : Cursor) -> Cursor? {
+pub fn[N : Node] Cursor::last_child(self : Cursor[N]) -> Cursor[N]? {
   let children = self.node.children()
   if children.is_empty() {
     None
@@ -167,7 +161,7 @@ pub fn Cursor::last_child(self : Cursor) -> Cursor? {
 }
 
 ///|
-pub fn Cursor::next_sibling(self : Cursor) -> Cursor? {
+pub fn[N] Cursor::next_sibling(self : Cursor[N]) -> Cursor[N]? {
   match self.context {
     Child(parent~, siblings~, index~) if index + 1 < siblings.length() =>
       Some(parent.child_at(siblings, index + 1))
@@ -176,7 +170,7 @@ pub fn Cursor::next_sibling(self : Cursor) -> Cursor? {
 }
 
 ///|
-pub fn Cursor::previous_sibling(self : Cursor) -> Cursor? {
+pub fn[N] Cursor::previous_sibling(self : Cursor[N]) -> Cursor[N]? {
   match self.context {
     Child(parent~, siblings~, index~) if index > 0 =>
       Some(parent.child_at(siblings, index - 1))
@@ -185,7 +179,7 @@ pub fn Cursor::previous_sibling(self : Cursor) -> Cursor? {
 }
 
 ///|
-pub fn Cursor::children(self : Cursor) -> ReadOnlyArray[Cursor] {
+pub fn[N : Node] Cursor::children(self : Cursor[N]) -> ReadOnlyArray[Cursor[N]] {
   let children = self.node.children()
   children.mapi((i, _) => self.child_at(children, i))
 }
@@ -204,17 +198,17 @@ pub extend Control with Eq::{equal, not_equal}
 pub extend Control with @debug.Debug::{to_repr}
 
 ///|
-priv enum WalkFrame {
-  Enter(Cursor)
-  Leave(Cursor)
+priv enum WalkFrame[N] {
+  Enter(Cursor[N])
+  Leave(Cursor[N])
 }
 
 ///|
 /// Depth-first traversal. Skipped nodes receive leave; Stop ends immediately.
-pub fn Cursor::walk(
-  self : Cursor,
-  enter : (Cursor) -> Control,
-  leave~ : (Cursor) -> Unit = _ => (),
+pub fn[N : Node] Cursor::walk(
+  self : Cursor[N],
+  enter : (Cursor[N]) -> Control,
+  leave~ : (Cursor[N]) -> Unit = _ => (),
 ) -> Unit {
   let pending = [WalkFrame::Enter(self)]
   while pending.pop() is Some(frame) {
@@ -237,19 +231,19 @@ pub fn Cursor::walk(
 }
 
 ///|
-pub fn walk_cursor(
-  root : Node,
-  enter : (Cursor) -> Control,
-  leave~ : (Cursor) -> Unit = _ => (),
+pub fn[N : Node] walk_cursor(
+  root : N,
+  enter : (Cursor[N]) -> Control,
+  leave~ : (Cursor[N]) -> Unit = _ => (),
 ) -> Unit {
-  root.cursor().walk(enter, leave~)
+  Cursor::Cursor(root).walk(enter, leave~)
 }
 
 ///|
-pub fn walk(
-  root : Node,
-  enter : (Node) -> Control,
-  leave~ : (Node) -> Unit = _ => (),
+pub fn[N : Node] walk(
+  root : N,
+  enter : (N) -> Control,
+  leave~ : (N) -> Unit = _ => (),
 ) -> Unit {
   walk_cursor(root, cursor => enter(cursor.node()), leave=cursor => {
     leave(cursor.node())
@@ -257,13 +251,21 @@ pub fn walk(
 }
 
 ///|
-pub fn[A] Notebook::fold(self : Notebook, init : A, f : (A, Cursor) -> A) -> A {
+/// Fold in pre-order with the original cursor context.
+pub fn[N : Node, A] Cursor::fold(
+  self : Cursor[N],
+  init : A,
+  f : (A, Cursor[N]) -> A,
+) -> A {
   let mut acc = init
-  self
-  .cursor()
-  .walk(cursor => {
+  self.walk(cursor => {
     acc = f(acc, cursor)
     Continue
   })
   acc
+}
+
+///|
+pub fn[N : Node, A] fold(root : N, init : A, f : (A, Cursor[N]) -> A) -> A {
+  Cursor::Cursor(root).fold(init, f)
 }
