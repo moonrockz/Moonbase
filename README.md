@@ -9,7 +9,6 @@ A MoonBit monorepo for Mission Control: shared contracts, a command-line applica
 | `pkgs/contracts` | `moonrockz/mission-control-contracts` | Commands shared by the CLI, the web UI and the desktop shell |
 | `pkgs/mdc` | `moonrockz/mdc` | Markdown with YAML frontmatter, cursors, visitors, folds and reduction |
 | `pkgs/ears` | `moonrockz/ears` | Typed EARS requirements, plain-text parsing and Markdown/MDC extraction |
-| `pkgs/notebooks` | `moonrockz/notebooks` | Jupyter and DIB notebooks with shared and format-specific navigation |
 | `apps/cli` | `moonrockz/mission-control-cli` | The `mission-control` command |
 | `apps/web` | `moonrockz/mission-control-web` | Web UI written with [Rabbita](https://github.com/moonbit-community/rabbita) |
 | `apps/desktop` | `moonrockz/mission-control-desktop` | Desktop shell: Proton command descriptors and the HTML document the window loads |
@@ -123,7 +122,6 @@ mission-control/
 ├── pkgs/contracts/            # shared commands (moonrockz/mission-control-contracts)
 ├── pkgs/mdc/                  # Markdown with frontmatter (moonrockz/mdc)
 ├── pkgs/ears/                 # EARS specifications (moonrockz/ears)
-├── pkgs/notebooks/            # Notebook models and traversal (moonrockz/notebooks)
 ├── tests/                     # acceptance suites and domain laws, unpublished
 ├── scripts/*.mbtx             # task scripts, run with moonx
 ├── moon.mod                   # workspace root module
