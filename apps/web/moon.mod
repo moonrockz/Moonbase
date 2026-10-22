@@ -1,6 +1,6 @@
 name = "moonrockz/mission-control-web"
 
-version = "0.0.1"
+version = "0.0.2"
 
 description = "Mission Control web UI, written with Rabbita"
 
@@ -17,6 +17,6 @@ supported_targets = "js"
 keywords = [ "mission-control", "rabbita", "web", "ui" ]
 
 import {
-  "moonrockz/mission-control-contracts@0.0.1",
+  "moonrockz/mission-control-contracts@0.0.2",
   "moonbit-community/rabbita@0.16.5",
 }

@@ -1,6 +1,6 @@
 name = "moonrockz/mission-control-cli"
 
-version = "0.0.1"
+version = "0.0.2"
 
 description = "Mission Control command-line application"
 
@@ -15,6 +15,6 @@ preferred_target = "wasm"
 keywords = [ "mission-control", "command-line", "moonx" ]
 
 import {
-  "moonrockz/mission-control-contracts@0.0.1",
+  "moonrockz/mission-control-contracts@0.0.2",
   "moonbitlang/x@0.5.5",
 }

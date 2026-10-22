@@ -1,6 +1,6 @@
 name = "moonrockz/mission-control-contracts"
 
-version = "0.0.1"
+version = "0.0.2"
 
 description = "Shared Mission Control commands for the CLI, the web UI and the desktop shell"
 

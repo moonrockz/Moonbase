@@ -1,9 +1,9 @@
 name = "moonrockz/ears"
 
-version = "0.0.1"
+version = "0.0.2"
 
 import {
-  "moonrockz/mdc@0.0.1",
+  "moonrockz/mdc@0.0.2",
   "moonrockz/expect@0.6.1",
 }
 

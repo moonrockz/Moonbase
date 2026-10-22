@@ -6,6 +6,20 @@ is 0.x, a minor release can contain breaking changes.
 
 <!-- git-cliff: end of header -->
 
+## [0.0.2] - 2026-10-22
+
+<!-- Highlights: replace this comment with a few sentences on what this release brings. -->
+
+### 🚜 Refactoring
+
+- Rename Moonbase to Mission Control ([#6](https://github.com/moonrockz/mission-control/pull/6)) by @DamianReeves
+
+### 🏗️ Build and CI
+
+- Remove the notebooks module, which moon-lander publishes ([#7](https://github.com/moonrockz/mission-control/pull/7)) by @DamianReeves
+
+**Full changelog**: https://github.com/moonrockz/mission-control/compare/v0.0.1...v0.0.2
+
 ## [0.0.1] - 2026-10-19
 
 Moonbase's first release publishes immutable Markdown documents and EARS
