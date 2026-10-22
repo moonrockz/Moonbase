@@ -1,6 +1,6 @@
 name = "moonrockz/mdc"
 
-version = "0.0.1"
+version = "0.0.2"
 
 import {
   "moonbit-community/cmark@0.4.12",

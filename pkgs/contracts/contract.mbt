@@ -27,5 +27,5 @@ pub fn command_name(command : Command) -> String {
 ///|
 /// The version of this module. It matches the workspace version.
 pub fn version() -> String {
-  "0.0.1"
+  "0.0.2"
 }

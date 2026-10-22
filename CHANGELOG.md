@@ -6,6 +6,32 @@ is 0.x, a minor release can contain breaking changes.
 
 <!-- git-cliff: end of header -->
 
+## [0.0.2] - 2026-10-22
+
+Moonbase is now Mission Control. The repository is `moonrockz/mission-control`,
+and the command and the release assets are named `mission-control`. The
+modules are now `moonrockz/mission-control-contracts`,
+`moonrockz/mission-control-cli`, `moonrockz/mission-control-web`,
+`moonrockz/mission-control-desktop`, `moonrockz/mdc` and `moonrockz/ears`.
+Replace the `moonrockz/moonbase-*` dependencies with these names.
+
+This repository no longer publishes `moonrockz/notebooks`. Use the module that
+moonrockz/moon-lander publishes.
+
+### 🐛 Bug fixes
+
+- *(release)* Set the version in every version assertion ([#9](https://github.com/moonrockz/mission-control/pull/9)) by @DamianReeves
+
+### 🚜 Refactoring
+
+- Rename Moonbase to Mission Control ([#6](https://github.com/moonrockz/mission-control/pull/6)) by @DamianReeves
+
+### 🏗️ Build and CI
+
+- Remove the notebooks module, which moon-lander publishes ([#7](https://github.com/moonrockz/mission-control/pull/7)) by @DamianReeves
+
+**Full changelog**: https://github.com/moonrockz/mission-control/compare/v0.0.1...v0.0.2
+
 ## [0.0.1] - 2026-10-19
 
 Moonbase's first release publishes immutable Markdown documents and EARS

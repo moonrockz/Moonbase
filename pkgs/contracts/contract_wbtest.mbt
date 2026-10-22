@@ -8,5 +8,5 @@ test "command names" {
 
 ///|
 test "version is the workspace version" {
-  inspect(version(), content="0.0.1")
+  inspect(version(), content="0.0.2")
 }
