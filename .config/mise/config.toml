@@ -21,6 +21,9 @@ zig = "0.17.0"
 # Changelog generator for the release notes
 "aqua:orhun/git-cliff" = "2.14.2"
 
+# Spec-driven change proposals under openspec/; needs Node.js 20.19 or later
+"npm:@fission-ai/openspec" = "1.14.3"
+
 # MoonBit toolchain, pinned. mise cannot resolve "latest" for an http: tool, and a pinned version
 # keeps CI and every machine on the same compiler. To move to a newer release, change the version
 # here and in each URL (with "+" written as "%2B"), taken from

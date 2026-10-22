@@ -123,6 +123,7 @@ mission-control/
 ├── pkgs/mdc/                  # Markdown with frontmatter (moonrockz/mdc)
 ├── pkgs/ears/                 # EARS specifications (moonrockz/ears)
 ├── tests/                     # acceptance suites and domain laws, unpublished
+├── openspec/                  # requirements and change proposals (OpenSpec)
 ├── scripts/*.mbtx             # task scripts, run with moonx
 ├── moon.mod                   # workspace root module
 └── moon.work                  # workspace members
