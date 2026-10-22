@@ -2,7 +2,7 @@
 test "version prints the contract version" {
   inspect(@contracts.version(), content="0.0.1")
   guard run(["version"]) is Text(text) else { panic() }
-  inspect(text, content="mission-control 0.0.1")
+  assert_eq(text, "mission-control " + @contracts.version())
 }
 
 ///|

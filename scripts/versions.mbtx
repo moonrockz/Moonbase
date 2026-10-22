@@ -33,6 +33,13 @@ let version_files : Array[(String, String)] = [
   (
     "apps/cli/cli_wbtest.mbt", "inspect(@contracts.version(), content=\"",
   ),
+  ("pkgs/contracts/contract_wbtest.mbt", "inspect(version(), content=\""),
+  (
+    "apps/web/app_wbtest.mbt", "inspect(@contracts.version(), content=\"",
+  ),
+  (
+    "apps/desktop/shell_wbtest.mbt", "inspect(version_reply().version, content=\"",
+  ),
 ]
 
 ///|
