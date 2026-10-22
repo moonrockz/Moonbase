@@ -7,19 +7,6 @@ Use `tests/<area>-acceptance/` for Moonspec step definitions and Gherkin feature
 Use `tests/<area>-laws/` for generated properties. Keep unit tests and implementation
 regressions beside their production package.
 
-## Notebook usage examples
-
-The three notebook packages contain `examples.mbt.md` guides whose `mbt check`
-blocks are executable documentation tests. They exercise the public APIs for
-shared traversal, Jupyter construction and edits, DIB custom registries and
-directives, immutable exports, error handling and format normalization.
-Selected constructor doc comments also contain checked examples.
-`mise run test` discovers these tests with the package tests on all targets.
-
-```shell
-mise exec -- moon test pkgs/notebooks pkgs/notebooks/nbformat pkgs/notebooks/dib --target js --deny-warn
-```
-
 ## MDC acceptance tests
 
 `mdc-acceptance/features/mdc.feature` covers metadata and Markdown parsing,
@@ -71,46 +58,6 @@ mise exec -- moon test tests/mdc-laws --target native
 `mise run test` includes these suites automatically. Acceptance tests declare
 `supported_targets = "js+native"`; laws run on all four targets. The runner reads
 package restrictions instead of skipping the entire tests module on wasm.
-
-## Notebook tests
-
-`nbformat-acceptance/` covers cells, outputs, attachments, older and future
-minor versions, retained extension payloads, cursor paths and validation errors.
-Each scenario owns its state. These scenarios run on JavaScript and native.
-
-`nbformat-laws/` runs three properties with 600 generated cases per target.
-They check JSON and text round trips, agreement between recursive traversal,
-walk and fold, and reversible cursor moves with resolvable saved paths.
-Generators build valid cells with unique IDs, rich outputs, Unicode metadata,
-attachments and unknown payloads. Shrinking rebuilds valid notebooks from
-smaller generation choices. Seeds, sizes and shrink limits are explicit.
-The laws run on all four targets.
-
-```shell
-mise exec -- moon test pkgs/notebooks/nbformat tests/nbformat-acceptance tests/nbformat-laws --target js
-mise exec -- moon test pkgs/notebooks/nbformat tests/nbformat-acceptance tests/nbformat-laws --target native
-mise exec -- moon test pkgs/notebooks/nbformat tests/nbformat-laws --target wasm
-mise exec -- moon test pkgs/notebooks/nbformat tests/nbformat-laws --target wasm-gc
-```
-
-`notebooks-acceptance/` covers shared traversal on Jupyter and DIB, custom
-kernel aliases, retained directives and access to specialized payloads. It
-runs on JavaScript and native. Existing Jupyter acceptance scenarios continue
-to run against the relocated `moonrockz/notebooks/nbformat` package.
-
-`notebooks-laws/` adds four properties with 800 generated cases per target.
-They compare common source observations across formats, verify cursor paths
-and document order, check DIB newline and alias normalization, and compare
-prune/stop behavior with a recursive model. Generators and shrinkers preserve
-valid notebook sources and IDs. A consumer-defined third format also checks
-that the open node contract does not require changes to the traversal engine.
-
-```shell
-mise exec -- moon test pkgs/notebooks/dib tests/notebooks-acceptance tests/notebooks-laws --target js
-mise exec -- moon test pkgs/notebooks/dib tests/notebooks-acceptance tests/notebooks-laws --target native
-mise exec -- moon test pkgs/notebooks/dib tests/notebooks-laws --target wasm
-mise exec -- moon test pkgs/notebooks/dib tests/notebooks-laws --target wasm-gc
-```
 
 ## EARS tests
 
