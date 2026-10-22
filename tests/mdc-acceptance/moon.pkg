@@ -1,6 +1,6 @@
 import {
   "moonbitlang/async",
-  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/mdc",
   "moonrockz/moonspec",
   "moonrockz/expect",
   "moonbit-community/cmark/cmark",

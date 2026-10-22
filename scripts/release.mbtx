@@ -34,7 +34,7 @@ let initial_version : String = "v0.0.1"
 
 ///|
 /// The repository, for links and for the install lines.
-let module_name : String = "moonrockz/Moonbase"
+let module_name : String = "moonrockz/mission-control"
 
 ///|
 let changelog_path : String = "CHANGELOG.md"
@@ -216,8 +216,8 @@ fn changelog_section(changelog : String, version : Version) -> String? {
 ///|
 /// The GitHub release notes: the install lines, then the changelog section.
 fn release_notes(version : Version, section : String) -> String {
-  let install = "**Install:**\n\n- `mise use github:\{module_name}@\{version}`\n- `moon add moonrockz/moonbase-contracts@\{version}`\n- `moonx moonrockz/moonbase-cli@\{version} --help`"
-  let wasm = "- `moonbase.wasm` needs a host that supplies the `__moonbit_fs_unstable` imports and `wasi_snapshot_preview1.fd_write`. `wasmtime` alone fails with `unknown import: __moonbit_fs_unstable::…`.\n- `moonbase-gc.wasm` needs a host with WebAssembly GC that supplies the `__moonbit_fs_unstable` imports and `spectest.print_char`. `wasmtime` alone fails with `unknown import: __moonbit_fs_unstable::…`."
+  let install = "**Install:**\n\n- `mise use github:\{module_name}@\{version}`\n- `moon add moonrockz/mission-control-contracts@\{version}`\n- `moonx moonrockz/mission-control-cli@\{version} --help`"
+  let wasm = "- `mission-control.wasm` needs a host that supplies the `__moonbit_fs_unstable` imports and `wasi_snapshot_preview1.fd_write`. `wasmtime` alone fails with `unknown import: __moonbit_fs_unstable::…`.\n- `mission-control-gc.wasm` needs a host with WebAssembly GC that supplies the `__moonbit_fs_unstable` imports and `spectest.print_char`. `wasmtime` alone fails with `unknown import: __moonbit_fs_unstable::…`."
   tidy_changelog(install + "\n\n**Wasm files:**\n\n" + wasm + "\n\n" + section)
 }
 
@@ -225,25 +225,25 @@ fn release_notes(version : Version, section : String) -> String {
 /// The packages that the Release workflow publishes to mooncakes.io, with their module names.
 /// `scripts/publish.mbtx` keeps the same list.
 let publish_list : Array[(String, String)] = [
-  ("pkgs/contracts", "moonrockz/moonbase-contracts"),
-  ("pkgs/mdc", "moonrockz/moonbase-mdc"),
-  ("pkgs/ears", "moonrockz/moonbase-ears"),
+  ("pkgs/contracts", "moonrockz/mission-control-contracts"),
+  ("pkgs/mdc", "moonrockz/mdc"),
+  ("pkgs/ears", "moonrockz/ears"),
   ("pkgs/notebooks", "moonrockz/notebooks"),
-  ("apps/cli", "moonrockz/moonbase-cli"),
-  ("apps/web", "moonrockz/moonbase-web"),
-  ("apps/desktop", "moonrockz/moonbase-desktop"),
+  ("apps/cli", "moonrockz/mission-control-cli"),
+  ("apps/web", "moonrockz/mission-control-web"),
+  ("apps/desktop", "moonrockz/mission-control-desktop"),
 ]
 
 ///|
 /// The files that a GitHub release holds. `dist/` has exactly these.
 let release_assets : Array[String] = [
-  "moonbase-linux-x64.tar.gz",
-  "moonbase-linux-arm64.tar.gz",
-  "moonbase-darwin-arm64.tar.gz",
-  "moonbase-darwin-x64.tar.gz",
-  "moonbase-windows-x64.zip",
-  "moonbase.wasm",
-  "moonbase-gc.wasm",
+  "mission-control-linux-x64.tar.gz",
+  "mission-control-linux-arm64.tar.gz",
+  "mission-control-darwin-arm64.tar.gz",
+  "mission-control-darwin-x64.tar.gz",
+  "mission-control-windows-x64.zip",
+  "mission-control.wasm",
+  "mission-control-gc.wasm",
   "checksums.txt",
 ]
 
@@ -430,7 +430,7 @@ fn is_refusal(output : String) -> Bool {
 
 ///|
 /// The line that ends each commit in the `git log` that `prepare` reads.
-let commit_end : String = "==moonbase-commit-end=="
+let commit_end : String = "==mission-control-commit-end=="
 
 ///|
 /// A Conventional Commits subject marks a breaking change with `!` before
@@ -1656,8 +1656,8 @@ impl @moonspec.World for ReleaseWorld with fn configure(self, setup) {
   setup.then0("the expected assets are the names that dist.mbtx writes", fn() raise {
     let source = self.dist_source
     for name in release_assets {
-      // `moonbase-<target>.tar.gz` and `.zip` names are built from the target; check the target part.
-      // `moonbase-` is 9 characters.
+      // `mission-control-<target>.tar.gz` and `.zip` names are built from the target; check the target part.
+      // `mission-control-` is 9 characters.
       let found = if name.has_suffix(".tar.gz") || name.has_suffix(".zip") {
         let target = name[:name.length() - (if name.has_suffix(".zip") { 4 } else { 7 })][9:].to_owned()
         source.contains("\"\{target}\"")

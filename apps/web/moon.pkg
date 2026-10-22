@@ -1,7 +1,7 @@
 pkgtype(kind: "executable")
 
 import {
-  "moonrockz/moonbase-contracts" @contracts,
+  "moonrockz/mission-control-contracts" @contracts,
   "moonbit-community/rabbita",
   "moonbit-community/rabbita/html",
 }

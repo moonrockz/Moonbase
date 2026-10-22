@@ -1,10 +1,10 @@
-name = "moonrockz/moonbase-desktop"
+name = "moonrockz/mission-control-desktop"
 
 version = "0.0.1"
 
-description = "Moonbase desktop shell: Proton command contract and HTML document"
+description = "Mission Control desktop shell: Proton command contract and HTML document"
 
-repository = "https://github.com/moonrockz/Moonbase"
+repository = "https://github.com/moonrockz/mission-control"
 
 license = "Apache-2.0"
 
@@ -12,9 +12,9 @@ readme = "README.md"
 
 preferred_target = "wasm"
 
-keywords = [ "moonbase", "proton", "desktop", "ui" ]
+keywords = [ "mission-control", "proton", "desktop", "ui" ]
 
 import {
-  "moonrockz/moonbase-contracts@0.0.1",
+  "moonrockz/mission-control-contracts@0.0.1",
   "moonbit-community/proton_contract@0.4.0",
 }

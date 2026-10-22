@@ -21,7 +21,7 @@ pub fn app() -> Val[Html] {
   })
   model.map(model => {
     div <| [
-      h1("Moonbase"),
+      h1("Mission Control"),
       p(@contracts.version()),
       p("\{model}"),
       button(on_click=emit(Inc), "+"),

@@ -1,6 +1,6 @@
-# moonbase-web
+# mission-control-web
 
-The Moonbase web UI. It is a [Rabbita](https://github.com/moonbit-community/rabbita) page. The page reads `version()` from `moonrockz/moonbase-contracts` and mounts into an element whose id is `app`.
+The Mission Control web UI. It is a [Rabbita](https://github.com/moonbit-community/rabbita) page. The page reads `version()` from `moonrockz/mission-control-contracts` and mounts into an element whose id is `app`.
 
 ```shell
 moon build apps/web --target js

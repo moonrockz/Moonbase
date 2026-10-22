@@ -138,14 +138,14 @@ jobs:
       - name: Update the registry
         run: moon update
 
-      - name: Build moonbase natively for Windows
+      - name: Build mission-control natively for Windows
         run: moon build apps/cli --target native --release
 
       - name: Upload the executable
         uses: actions/upload-artifact@v4
         with:
           name: windows-x64-exe
-          path: _build/native/release/build/moonrockz/moonbase-cli/moonbase-cli.exe
+          path: _build/native/release/build/moonrockz/mission-control-cli/mission-control-cli.exe
           if-no-files-found: error
           retention-days: 30
 
@@ -168,7 +168,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: windows-x64-exe
-          path: _build/cross/windows-x64/native/release/build/moonrockz/moonbase-cli
+          path: _build/cross/windows-x64/native/release/build/moonrockz/mission-control-cli
 
       - name: Build the release outputs into dist/
         run: mise run build:release
@@ -218,21 +218,21 @@ jobs:
         shell: bash
         run: |
           mkdir smoke
-          tar -xzf "dist/moonbase-${{ matrix.asset }}.tar.gz" -C smoke
+          tar -xzf "dist/mission-control-${{ matrix.asset }}.tar.gz" -C smoke
 
       - name: Unpack the archive (zip)
         if: matrix.unpack == 'zip'
         shell: pwsh
-        run: Expand-Archive -Path "dist/moonbase-${{ matrix.asset }}.zip" -DestinationPath smoke
+        run: Expand-Archive -Path "dist/mission-control-${{ matrix.asset }}.zip" -DestinationPath smoke
 
-      - name: Run moonbase version and check the version
+      - name: Run mission-control version and check the version
         shell: bash
         env:
           EXPECTED: ${{ needs.plan.outputs.version }}
         run: |
           set -euo pipefail
-          bin=smoke/moonbase
-          if [ "${{ matrix.asset }}" = "windows-x64" ]; then bin=smoke/moonbase.exe; fi
+          bin=smoke/mission-control
+          if [ "${{ matrix.asset }}" = "windows-x64" ]; then bin=smoke/mission-control.exe; fi
           chmod +x "$bin" || true
           out="$("$bin" version)"
           echo "$out"
@@ -241,7 +241,7 @@ jobs:
           fi
           pattern="(^|[^0-9.])${EXPECTED//./\\.}([^0-9.]|$)"
           if ! grep -Eq "$pattern" <<<"$out"; then
-            echo "::error::moonbase version did not print $EXPECTED"; exit 1
+            echo "::error::mission-control version did not print $EXPECTED"; exit 1
           fi
 
   publish:

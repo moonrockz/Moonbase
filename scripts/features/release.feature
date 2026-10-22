@@ -190,14 +190,14 @@ Feature: Release tooling
       """
       **Install:**
 
-      - `mise use github:moonrockz/Moonbase@0.3.0`
-      - `moon add moonrockz/moonbase-contracts@0.3.0`
-      - `moonx moonrockz/moonbase-cli@0.3.0 --help`
+      - `mise use github:moonrockz/mission-control@0.3.0`
+      - `moon add moonrockz/mission-control-contracts@0.3.0`
+      - `moonx moonrockz/mission-control-cli@0.3.0 --help`
 
       **Wasm files:**
 
-      - `moonbase.wasm` needs a host that supplies the `__moonbit_fs_unstable` imports and `wasi_snapshot_preview1.fd_write`. `wasmtime` alone fails with `unknown import: __moonbit_fs_unstable::…`.
-      - `moonbase-gc.wasm` needs a host with WebAssembly GC that supplies the `__moonbit_fs_unstable` imports and `spectest.print_char`. `wasmtime` alone fails with `unknown import: __moonbit_fs_unstable::…`.
+      - `mission-control.wasm` needs a host that supplies the `__moonbit_fs_unstable` imports and `wasi_snapshot_preview1.fd_write`. `wasmtime` alone fails with `unknown import: __moonbit_fs_unstable::…`.
+      - `mission-control-gc.wasm` needs a host with WebAssembly GC that supplies the `__moonbit_fs_unstable` imports and `spectest.print_char`. `wasmtime` alone fails with `unknown import: __moonbit_fs_unstable::…`.
 
       Highlights of 0.3.0.
 
@@ -286,11 +286,11 @@ Feature: Release tooling
       Adds format.
 
       BREAKING CHANGE: print_file changes.
-      ==moonbase-commit-end==
+      ==mission-control-commit-end==
       fix(scanner)!: stricter hex (#45)
-      ==moonbase-commit-end==
+      ==mission-control-commit-end==
       docs: cookbook (#46)
-      ==moonbase-commit-end==
+      ==mission-control-commit-end==
       """
     Then the breaking commits without a footer in the log are "fix(scanner)!: stricter hex (#45)"
 
@@ -373,22 +373,22 @@ Feature: Release tooling
       """
 
   Scenario Outline: The gh commands of the GitHub release step
-    Given the local assets are "moonbase.wasm checksums.txt" and the GitHub release has "<remote>"
+    Given the local assets are "mission-control.wasm checksums.txt" and the GitHub release has "<remote>"
     Then the gh steps when the release exists: "<exists>" are "<steps>"
 
     Examples:
       | exists | remote                    | steps                                                                                                   |
-      | no     |                           | release create v0.0.1 --target abc123 --title v0.0.1 --notes-file notes.md dist/moonbase.wasm dist/checksums.txt |
-      | yes    | moonbase.wasm checksums.txt |                                                                                                         |
-      | yes    | moonbase.wasm               | release upload v0.0.1 dist/checksums.txt --clobber                                                      |
-      | yes    |                           | release upload v0.0.1 dist/moonbase.wasm dist/checksums.txt --clobber                                     |
+      | no     |                           | release create v0.0.1 --target abc123 --title v0.0.1 --notes-file notes.md dist/mission-control.wasm dist/checksums.txt |
+      | yes    | mission-control.wasm checksums.txt |                                                                                                         |
+      | yes    | mission-control.wasm               | release upload v0.0.1 dist/checksums.txt --clobber                                                      |
+      | yes    |                           | release upload v0.0.1 dist/mission-control.wasm dist/checksums.txt --clobber                                     |
 
   Scenario: A draft release is published after its assets are complete
-    Given the local assets are "moonbase.wasm checksums.txt" and the GitHub release has "moonbase.wasm checksums.txt"
+    Given the local assets are "mission-control.wasm checksums.txt" and the GitHub release has "mission-control.wasm checksums.txt"
     Then the gh steps for a draft release are "release edit v0.0.1 --draft=false"
 
   Scenario: A draft release that lacks assets gets them first
-    Given the local assets are "moonbase.wasm checksums.txt" and the GitHub release has "moonbase.wasm"
+    Given the local assets are "mission-control.wasm checksums.txt" and the GitHub release has "mission-control.wasm"
     Then the gh steps for a draft release are "release upload v0.0.1 dist/checksums.txt --clobber | release edit v0.0.1 --draft=false"
 
   Scenario Outline: Retry only the failures that a retry can fix
@@ -408,7 +408,7 @@ Feature: Release tooling
   Scenario: The version mooncakes.io publishes
     Given the text:
       """
-      {"module":"moonrockz/moonbase-syntax","version":"0.0.1","yanked":false}
+      {"module":"moonrockz/mission-control-syntax","version":"0.0.1","yanked":false}
       """
     Then the mooncakes.io version is "0.0.1"
 
@@ -457,11 +457,11 @@ Feature: Release tooling
   Scenario: The GitHub release lacks assets
     Given moon.mod on main is "0.0.1" and the latest tag is "0.0.1"
     And the main version is tagged: "yes", has a GitHub release: "yes", mooncakes.io has "0.0.1"
-    And the GitHub release lacks the assets "moonbase.wasm checksums.txt"
+    And the GitHub release lacks the assets "mission-control.wasm checksums.txt"
     And 0 unreleased commits and release pull requests ""
     Then the status report is:
       """
-      problem: the GitHub release v0.0.1 lacks assets: moonbase.wasm, checksums.txt; run `gh workflow run release.yml --ref v0.0.1`
+      problem: the GitHub release v0.0.1 lacks assets: mission-control.wasm, checksums.txt; run `gh workflow run release.yml --ref v0.0.1`
       """
 
   Scenario: Tagged but not published
@@ -476,11 +476,11 @@ Feature: Release tooling
   Scenario: One module is behind on mooncakes.io
     Given moon.mod on main is "0.0.2" and the latest tag is "0.0.2"
     And the main version is tagged: "yes", has a GitHub release: "yes", mooncakes.io has "0.0.2"
-    And mooncakes.io has "0.0.2" for "moonrockz/moonbase-syntax" and "0.0.1" for "moonrockz/zig-cross"
+    And mooncakes.io has "0.0.2" for "moonrockz/mission-control-syntax" and "0.0.1" for "moonrockz/zig-cross"
     And 0 unreleased commits and release pull requests ""
     Then the status report is:
       """
-      problem: v0.0.2 is tagged but mooncakes.io has moonrockz/moonbase-syntax 0.0.2, moonrockz/zig-cross 0.0.1; run `gh workflow run release.yml --ref v0.0.2`
+      problem: v0.0.2 is tagged but mooncakes.io has moonrockz/mission-control-syntax 0.0.2, moonrockz/zig-cross 0.0.1; run `gh workflow run release.yml --ref v0.0.2`
       """
 
   Scenario: mooncakes.io cannot be read
@@ -558,10 +558,10 @@ Feature: Release tooling
 
     Examples:
       | draft | assets                                                                                                                                       | plan                             |
-      | no    | moonbase-linux-x64.tar.gz moonbase-linux-arm64.tar.gz moonbase-darwin-arm64.tar.gz moonbase-darwin-x64.tar.gz moonbase-windows-x64.zip moonbase.wasm moonbase-gc.wasm checksums.txt | skip: v0.0.1 is already released |
-      | no    | moonbase-linux-x64.tar.gz moonbase-linux-arm64.tar.gz moonbase-darwin-arm64.tar.gz moonbase-darwin-x64.tar.gz moonbase-windows-x64.zip moonbase.wasm moonbase-gc.wasm | release 0.0.1                    |
+      | no    | mission-control-linux-x64.tar.gz mission-control-linux-arm64.tar.gz mission-control-darwin-arm64.tar.gz mission-control-darwin-x64.tar.gz mission-control-windows-x64.zip mission-control.wasm mission-control-gc.wasm checksums.txt | skip: v0.0.1 is already released |
+      | no    | mission-control-linux-x64.tar.gz mission-control-linux-arm64.tar.gz mission-control-darwin-arm64.tar.gz mission-control-darwin-x64.tar.gz mission-control-windows-x64.zip mission-control.wasm mission-control-gc.wasm | release 0.0.1                    |
       | no    |                                                                                                                                              | release 0.0.1                    |
-      | yes   | moonbase-linux-x64.tar.gz moonbase-linux-arm64.tar.gz moonbase-darwin-arm64.tar.gz moonbase-darwin-x64.tar.gz moonbase-windows-x64.zip moonbase.wasm moonbase-gc.wasm checksums.txt | release 0.0.1                    |
+      | yes   | mission-control-linux-x64.tar.gz mission-control-linux-arm64.tar.gz mission-control-darwin-arm64.tar.gz mission-control-darwin-x64.tar.gz mission-control-windows-x64.zip mission-control.wasm mission-control-gc.wasm checksums.txt | release 0.0.1                    |
 
   Scenario: The expected assets are the files that dist.mbtx writes
     Then the expected assets are the names that dist.mbtx writes
@@ -570,25 +570,25 @@ Feature: Release tooling
     Given the publication script is:
       """moonbit
       let publish_list : Array[(String, String)] = [
-        ("pkgs/moonbase-syntax", "moonrockz/moonbase-syntax"),
+        ("pkgs/mission-control-syntax", "moonrockz/mission-control-syntax"),
         ("apps/zig-cross", "moonrockz/zig-cross"),
       ]
       """
     Then status for version "0.0.1" tagged "yes" reads "v0.0.1:scripts/publish.mbtx"
-    And the publication modules are "moonrockz/moonbase-syntax, moonrockz/zig-cross"
+    And the publication modules are "moonrockz/mission-control-syntax, moonrockz/zig-cross"
 
   Scenario: Check an untagged main version against its new publication list
     Given the publication script is:
       """moonbit
       let publish_list : Array[(String, String)] = [
-        ("pkgs/moonbase-syntax", "moonrockz/moonbase-syntax"),
+        ("pkgs/mission-control-syntax", "moonrockz/mission-control-syntax"),
         ("pkgs/smithy", "moonrockz/smithy"),
-        ("apps/smithy", "moonrockz/moonbase-cli"),
+        ("apps/smithy", "moonrockz/mission-control-cli"),
         ("apps/zig-cross", "moonrockz/zig-cross"),
       ]
       """
     Then status for version "0.1.0" tagged "no" reads "origin/main:scripts/publish.mbtx"
-    And the publication modules are "moonrockz/moonbase-syntax, moonrockz/smithy, moonrockz/moonbase-cli, moonrockz/zig-cross"
+    And the publication modules are "moonrockz/mission-control-syntax, moonrockz/smithy, moonrockz/mission-control-cli, moonrockz/zig-cross"
 
   Scenario: A missing publication list cannot silently pass release status
     Given the publication script is:
@@ -605,7 +605,7 @@ Feature: Release tooling
           "pkgs/a-very-long-package-directory",
           "moonrockz/a-very-long-module-name",
         ),
-        ("apps/smithy", "moonrockz/moonbase-cli"),
+        ("apps/smithy", "moonrockz/mission-control-cli"),
       ]
       """
-    Then the publication modules are "moonrockz/a-very-long-module-name, moonrockz/moonbase-cli"
+    Then the publication modules are "moonrockz/a-very-long-module-name, moonrockz/mission-control-cli"

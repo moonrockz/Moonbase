@@ -1,5 +1,5 @@
 import {
-  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/mdc",
   "moonrockz/expect",
   "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",

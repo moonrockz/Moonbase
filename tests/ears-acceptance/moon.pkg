@@ -1,7 +1,7 @@
 import {
   "moonbitlang/async",
-  "moonrockz/moonbase-ears" @ears,
-  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/ears",
+  "moonrockz/mdc",
   "moonrockz/moonspec",
   "moonrockz/expect",
 } for "wbtest"

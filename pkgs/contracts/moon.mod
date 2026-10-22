@@ -1,13 +1,13 @@
-name = "moonrockz/moonbase-contracts"
+name = "moonrockz/mission-control-contracts"
 
 version = "0.0.1"
 
-description = "Shared Moonbase commands for the CLI, the web UI and the desktop shell"
+description = "Shared Mission Control commands for the CLI, the web UI and the desktop shell"
 
-repository = "https://github.com/moonrockz/Moonbase"
+repository = "https://github.com/moonrockz/mission-control"
 
 license = "Apache-2.0"
 
-keywords = [ "moonbase", "contract", "cli" ]
+keywords = [ "mission-control", "contract", "cli" ]
 
 readme = "README.md"

@@ -1,20 +1,20 @@
-# moonbase
+# mission-control
 
-The Moonbase command.
+The Mission Control command.
 
 ```shell
-moonbase version
-moonbase help
+mission-control version
+mission-control help
 ```
 
 Install a native binary from a GitHub release:
 
 ```shell
-mise use -g github:moonrockz/Moonbase
+mise use -g github:moonrockz/mission-control
 ```
 
 Run the published module without a native install:
 
 ```shell
-moonx moonrockz/moonbase-cli@latest version
+moonx moonrockz/mission-control-cli@latest version
 ```

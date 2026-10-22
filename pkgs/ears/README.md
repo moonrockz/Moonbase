@@ -1,12 +1,12 @@
 # EARS
 
-`moonrockz/moonbase-ears` parses and represents requirements written in
+`moonrockz/ears` parses and represents requirements written in
 [EARS, the Easy Approach to Requirements Syntax](https://alistairmavin.com/ears/).
 It supports ubiquitous, state driven, event driven, optional feature, unwanted
 behaviour and complex requirements.
 
-Import `moonrockz/moonbase-ears` as `@ears` in `moon.pkg`. To work with an
-existing MDC document, also import `moonrockz/moonbase-mdc` as `@mdc`.
+Import `moonrockz/ears` as `@ears` in `moon.pkg`. To work with an
+existing MDC document, also import `moonrockz/mdc` as `@mdc`.
 
 ## One requirement
 

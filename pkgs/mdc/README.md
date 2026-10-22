@@ -1,6 +1,6 @@
 # MDC
 
-`moonrockz/moonbase-mdc` parses Markdown with optional YAML frontmatter. It uses
+`moonrockz/mdc` parses Markdown with optional YAML frontmatter. It uses
 [cmark](https://github.com/moonbit-community/cmark.mbt) `0.4.12` for Markdown and
 [yaml](https://github.com/moonbit-community/yaml.mbt) `0.0.7` for metadata.
 
@@ -9,7 +9,7 @@ and Markdown nodes without adding OKF rules to the MDC parser.
 
 ## Parsing
 
-Import `moonrockz/moonbase-mdc` as `@mdc` in your `moon.pkg`.
+Import `moonrockz/mdc` as `@mdc` in your `moon.pkg`.
 
 ```moonbit
 let doc = @mdc.Document::Document("---\ntitle: Goal\n---\n# Goal\n")

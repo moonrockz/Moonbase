@@ -6,7 +6,7 @@ import {
 }
 
 import {
-  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/mdc",
   "moonbit-community/cmark/cmark",
   "moonbit-community/yaml",
   "moonbitlang/core/debug",

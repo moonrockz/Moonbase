@@ -1,10 +1,10 @@
 import {
-  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/mdc",
   "moonbitlang/core/debug",
 }
 
 import {
-  "moonrockz/moonbase-ears" @ears,
-  "moonrockz/moonbase-mdc" @mdc,
+  "moonrockz/ears",
+  "moonrockz/mdc",
   "moonrockz/expect",
 } for "test"

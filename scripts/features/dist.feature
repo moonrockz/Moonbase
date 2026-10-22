@@ -8,11 +8,11 @@ Feature: Release outputs
 
     Examples:
       | target       | archive                        | binary      |
-      | linux-x64    | moonbase-linux-x64.tar.gz    | moonbase    |
-      | linux-arm64  | moonbase-linux-arm64.tar.gz  | moonbase    |
-      | darwin-arm64 | moonbase-darwin-arm64.tar.gz | moonbase    |
-      | darwin-x64   | moonbase-darwin-x64.tar.gz   | moonbase    |
-      | windows-x64  | moonbase-windows-x64.zip     | moonbase.exe |
+      | linux-x64    | mission-control-linux-x64.tar.gz    | mission-control    |
+      | linux-arm64  | mission-control-linux-arm64.tar.gz  | mission-control    |
+      | darwin-arm64 | mission-control-darwin-arm64.tar.gz | mission-control    |
+      | darwin-x64   | mission-control-darwin-x64.tar.gz   | mission-control    |
+      | windows-x64  | mission-control-windows-x64.zip     | mission-control.exe |
 
   Scenario: The zig cross-build leaves out windows-x64
     Then the cross-built targets are "linux-x64,linux-arm64,darwin-arm64,darwin-x64"
