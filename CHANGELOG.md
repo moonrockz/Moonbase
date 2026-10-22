@@ -8,7 +8,15 @@ is 0.x, a minor release can contain breaking changes.
 
 ## [0.0.2] - 2026-10-22
 
-<!-- Highlights: replace this comment with a few sentences on what this release brings. -->
+Moonbase is now Mission Control. The repository is `moonrockz/mission-control`,
+and the command and the release assets are named `mission-control`. The
+modules are now `moonrockz/mission-control-contracts`,
+`moonrockz/mission-control-cli`, `moonrockz/mission-control-web`,
+`moonrockz/mission-control-desktop`, `moonrockz/mdc` and `moonrockz/ears`.
+Replace the `moonrockz/moonbase-*` dependencies with these names.
+
+This repository no longer publishes `moonrockz/notebooks`. Use the module that
+moonrockz/moon-lander publishes.
 
 ### 🚜 Refactoring
 
