@@ -8,7 +8,7 @@ import {
 
 description = "Immutable Jupyter and DIB notebooks with shared navigation and traversal"
 
-repository = "https://github.com/moonrockz/Moonbase"
+repository = "https://github.com/moonrockz/mission-control"
 
 license = "Apache-2.0"
 

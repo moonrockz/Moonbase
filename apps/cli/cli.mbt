@@ -7,7 +7,7 @@ pub enum Run {
 
 ///|
 pub fn usage() -> String {
-  "Usage: moonbase <command>\n\nCommands:\n  help       Print this help\n  version    Print the version"
+  "Usage: mission-control <command>\n\nCommands:\n  help       Print this help\n  version    Print the version"
 }
 
 ///|
@@ -19,7 +19,7 @@ pub fn run(args : Array[String]) -> Run {
   }
   match @contracts.parse_command(name) {
     Some(Help) => Text(usage())
-    Some(Version) => Text("moonbase " + @contracts.version())
+    Some(Version) => Text("mission-control " + @contracts.version())
     None => Unknown(name)
   }
 }

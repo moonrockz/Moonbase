@@ -1,7 +1,7 @@
 # Notebooks
 
 `moonrockz/notebooks` provides immutable notebook models and shared navigation
-and traversal. The module has no dependency on the other Moonbase modules.
+and traversal. The module has no dependency on the other Mission Control modules.
 
 | Package | Purpose |
 | --- | --- |
@@ -120,11 +120,11 @@ This module does not convert between file formats. Reading and writing remain
 explicit operations on each format's notebook type, so saving a DIB notebook
 cannot silently discard Jupyter outputs or attachments.
 
-## Migration from moonbase-nbformat
+## Migration from mission-control-nbformat
 
-Replace the module dependency `moonrockz/moonbase-nbformat` with
+Replace the module dependency `moonrockz/mission-control-nbformat` with
 `moonrockz/notebooks` at the workspace version. Replace the package import
-`moonrockz/moonbase-nbformat` with `moonrockz/notebooks/nbformat`, keeping the
+`moonrockz/mission-control-nbformat` with `moonrockz/notebooks/nbformat`, keeping the
 `@nbformat` alias. Existing Jupyter codecs and convenience navigation methods
 remain available. Explicit cursor annotations now use
 `@nbformat.Cursor[@nbformat.Node]`, or `@notebooks.Cursor[@nbformat.Node]`.

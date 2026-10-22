@@ -1,10 +1,10 @@
-name = "moonrockz/moonbase-web"
+name = "moonrockz/mission-control-web"
 
 version = "0.0.1"
 
-description = "Moonbase web UI, written with Rabbita"
+description = "Mission Control web UI, written with Rabbita"
 
-repository = "https://github.com/moonrockz/Moonbase"
+repository = "https://github.com/moonrockz/mission-control"
 
 license = "Apache-2.0"
 
@@ -14,9 +14,9 @@ preferred_target = "js"
 
 supported_targets = "js"
 
-keywords = [ "moonbase", "rabbita", "web", "ui" ]
+keywords = [ "mission-control", "rabbita", "web", "ui" ]
 
 import {
-  "moonrockz/moonbase-contracts@0.0.1",
+  "moonrockz/mission-control-contracts@0.0.1",
   "moonbit-community/rabbita@0.16.5",
 }

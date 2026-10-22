@@ -1,4 +1,4 @@
-# Mise configuration for the moonrockz/Moonbase monorepo.
+# Mise configuration for the moonrockz/mission-control monorepo.
 #
 # Tools are pinned here. Tasks are MoonBit scripts in scripts/*.mbtx, run with moonx, so one script
 # works on every platform (see AGENTS.md, "Task scripts").

@@ -1,54 +1,54 @@
-# Moonbase
+# Mission Control
 
-A MoonBit monorepo for Moonbase: shared contracts, a command-line application, a web UI and a Proton desktop shell.
+A MoonBit monorepo for Mission Control: shared contracts, a command-line application, a web UI and a Proton desktop shell.
 
 ## Packages
 
 | Path | Module | Purpose |
 |------|--------|---------|
-| `pkgs/contracts` | `moonrockz/moonbase-contracts` | Commands shared by the CLI, the web UI and the desktop shell |
-| `pkgs/mdc` | `moonrockz/moonbase-mdc` | Markdown with YAML frontmatter, cursors, visitors, folds and reduction |
-| `pkgs/ears` | `moonrockz/moonbase-ears` | Typed EARS requirements, plain-text parsing and Markdown/MDC extraction |
+| `pkgs/contracts` | `moonrockz/mission-control-contracts` | Commands shared by the CLI, the web UI and the desktop shell |
+| `pkgs/mdc` | `moonrockz/mdc` | Markdown with YAML frontmatter, cursors, visitors, folds and reduction |
+| `pkgs/ears` | `moonrockz/ears` | Typed EARS requirements, plain-text parsing and Markdown/MDC extraction |
 | `pkgs/notebooks` | `moonrockz/notebooks` | Jupyter and DIB notebooks with shared and format-specific navigation |
-| `apps/cli` | `moonrockz/moonbase-cli` | The `moonbase` command |
-| `apps/web` | `moonrockz/moonbase-web` | Web UI written with [Rabbita](https://github.com/moonbit-community/rabbita) |
-| `apps/desktop` | `moonrockz/moonbase-desktop` | Desktop shell: Proton command descriptors and the HTML document the window loads |
-| `tests` | `moonrockz/moonbase-tests` | Unpublished acceptance suites and property laws |
+| `apps/cli` | `moonrockz/mission-control-cli` | The `mission-control` command |
+| `apps/web` | `moonrockz/mission-control-web` | Web UI written with [Rabbita](https://github.com/moonbit-community/rabbita) |
+| `apps/desktop` | `moonrockz/mission-control-desktop` | Desktop shell: Proton command descriptors and the HTML document the window loads |
+| `tests` | `moonrockz/mission-control-tests` | Unpublished acceptance suites and property laws |
 
 The workspace members are listed in `moon.work`.
 
 ## Install
 
-Install the `moonbase` command with [mise](https://mise.jdx.dev/) from a GitHub release:
+Install the `mission-control` command with [mise](https://mise.jdx.dev/) from a GitHub release:
 
 ```shell
-mise use -g github:moonrockz/Moonbase
-moonbase version
+mise use -g github:moonrockz/mission-control
+mission-control version
 ```
 
 Run the CLI module from mooncakes.io without a native binary:
 
 ```shell
-moonx moonrockz/moonbase-cli@latest version
+moonx moonrockz/mission-control-cli@latest version
 ```
 
 Use the contracts in a MoonBit project:
 
 ```shell
-moon add moonrockz/moonbase-contracts
+moon add moonrockz/mission-control-contracts
 ```
 
 Each GitHub release has 8 assets. The names have no version, so `releases/latest/download/<name>` is a stable URL.
 
 | Asset | Content |
 |-------|---------|
-| `moonbase-linux-x64.tar.gz` | `moonbase` for Linux x86-64 (static musl) |
-| `moonbase-linux-arm64.tar.gz` | `moonbase` for Linux arm64 (static musl) |
-| `moonbase-darwin-arm64.tar.gz` | `moonbase` for macOS on Apple silicon |
-| `moonbase-darwin-x64.tar.gz` | `moonbase` for macOS on Intel |
-| `moonbase-windows-x64.zip` | `moonbase.exe` for Windows x86-64 (built on Windows) |
-| `moonbase.wasm` | The CLI for the MoonBit `wasm` target |
-| `moonbase-gc.wasm` | The CLI for the MoonBit `wasm-gc` target |
+| `mission-control-linux-x64.tar.gz` | `mission-control` for Linux x86-64 (static musl) |
+| `mission-control-linux-arm64.tar.gz` | `mission-control` for Linux arm64 (static musl) |
+| `mission-control-darwin-arm64.tar.gz` | `mission-control` for macOS on Apple silicon |
+| `mission-control-darwin-x64.tar.gz` | `mission-control` for macOS on Intel |
+| `mission-control-windows-x64.zip` | `mission-control.exe` for Windows x86-64 (built on Windows) |
+| `mission-control.wasm` | The CLI for the MoonBit `wasm` target |
+| `mission-control-gc.wasm` | The CLI for the MoonBit `wasm-gc` target |
 | `checksums.txt` | SHA-256 of the other 7 assets |
 
 The binary is at the root of each archive. Check a download with `sha256sum -c checksums.txt`.
@@ -57,7 +57,7 @@ The two wasm files are not WASI programs. They import MoonBit host functions fro
 
 ## Ecosystem
 
-Moonbase builds on packages from these orgs:
+Mission Control builds on packages from these orgs:
 
 - **moonbitlang.** The toolchain, `moonbitlang/core` and `moonbitlang/x`.
 - **moonbit-community.** [Rabbita](https://github.com/moonbit-community/rabbita) `0.16.5` for the web UI. [Proton](https://github.com/moonbit-community/proton) `proton_contract` `0.4.0` for the desktop command descriptors. The Proton window runtime (`moonbit-community/proton`) links CEF. It is not a dependency yet. See [apps/desktop/README.md](apps/desktop/README.md).
@@ -71,8 +71,8 @@ Moonbase builds on packages from these orgs:
 ## Setup
 
 ```shell
-git clone https://github.com/moonrockz/Moonbase.git
-cd Moonbase
+git clone https://github.com/moonrockz/mission-control.git
+cd mission-control
 mise trust
 mise install
 ```
@@ -113,16 +113,16 @@ Without mise: `moonx scripts/<name>.mbtx [args]`.
 ## Layout
 
 ```
-Moonbase/
+mission-control/
 ├── .config/mise/config.toml   # tools and tasks
 ├── .github/workflows/ci.yml   # lint, build and test
 ├── .github/workflows/release.yml # plan, validate, build, smoke, publish, release
-├── apps/cli/                  # moonbase command (moonrockz/moonbase-cli)
-├── apps/web/                  # Rabbita UI (moonrockz/moonbase-web)
-├── apps/desktop/              # Proton shell (moonrockz/moonbase-desktop)
-├── pkgs/contracts/            # shared commands (moonrockz/moonbase-contracts)
-├── pkgs/mdc/                  # Markdown with frontmatter (moonrockz/moonbase-mdc)
-├── pkgs/ears/                 # EARS specifications (moonrockz/moonbase-ears)
+├── apps/cli/                  # mission-control command (moonrockz/mission-control-cli)
+├── apps/web/                  # Rabbita UI (moonrockz/mission-control-web)
+├── apps/desktop/              # Proton shell (moonrockz/mission-control-desktop)
+├── pkgs/contracts/            # shared commands (moonrockz/mission-control-contracts)
+├── pkgs/mdc/                  # Markdown with frontmatter (moonrockz/mdc)
+├── pkgs/ears/                 # EARS specifications (moonrockz/ears)
 ├── pkgs/notebooks/            # Notebook models and traversal (moonrockz/notebooks)
 ├── tests/                     # acceptance suites and domain laws, unpublished
 ├── scripts/*.mbtx             # task scripts, run with moonx
@@ -140,7 +140,7 @@ The first push of this repository does not run the release plan. `CHANGELOG.md` 
 
 ## Adding a package
 
-1. Create `pkgs/<name>/moon.mod` (module `moonrockz/moonbase-<name>`) and a `moon.pkg`.
+1. Create `pkgs/<name>/moon.mod` (module `moonrockz/mission-control-<name>`) and a `moon.pkg`.
 2. Add `"./pkgs/<name>"` to `moon.work`.
 3. Add the module to `publish_list` in `scripts/publish.mbtx` and `scripts/release.mbtx` when it should be published.
 4. Run `mise run validate`.

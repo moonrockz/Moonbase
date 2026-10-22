@@ -1,4 +1,4 @@
-name = "moonrockz/moonbase-mdc"
+name = "moonrockz/mdc"
 
 version = "0.0.1"
 
@@ -7,9 +7,9 @@ import {
   "moonbit-community/yaml@0.0.7",
 }
 
-description = "Markdown with YAML frontmatter and traversal APIs for Moonbase"
+description = "Markdown with YAML frontmatter and traversal APIs for Mission Control"
 
-repository = "https://github.com/moonrockz/Moonbase"
+repository = "https://github.com/moonrockz/mission-control"
 
 license = "Apache-2.0"
 

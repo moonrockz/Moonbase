@@ -1,15 +1,15 @@
-name = "moonrockz/moonbase-ears"
+name = "moonrockz/ears"
 
 version = "0.0.1"
 
 import {
-  "moonrockz/moonbase-mdc@0.0.1",
+  "moonrockz/mdc@0.0.1",
   "moonrockz/expect@0.6.1",
 }
 
 description = "Immutable EARS requirements and extraction from text and MDC documents"
 
-repository = "https://github.com/moonrockz/Moonbase"
+repository = "https://github.com/moonrockz/mission-control"
 
 license = "Apache-2.0"
 

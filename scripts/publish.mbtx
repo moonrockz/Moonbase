@@ -22,13 +22,13 @@ import {
 /// The packages to publish, with their module names, in dependency order. Add a line for each public
 /// module. `scripts/release.mbtx` keeps the same list, and a scenario checks that the two are equal.
 let publish_list : Array[(String, String)] = [
-  ("pkgs/contracts", "moonrockz/moonbase-contracts"),
-  ("pkgs/mdc", "moonrockz/moonbase-mdc"),
-  ("pkgs/ears", "moonrockz/moonbase-ears"),
+  ("pkgs/contracts", "moonrockz/mission-control-contracts"),
+  ("pkgs/mdc", "moonrockz/mdc"),
+  ("pkgs/ears", "moonrockz/ears"),
   ("pkgs/notebooks", "moonrockz/notebooks"),
-  ("apps/cli", "moonrockz/moonbase-cli"),
-  ("apps/web", "moonrockz/moonbase-web"),
-  ("apps/desktop", "moonrockz/moonbase-desktop"),
+  ("apps/cli", "moonrockz/mission-control-cli"),
+  ("apps/web", "moonrockz/mission-control-web"),
+  ("apps/desktop", "moonrockz/mission-control-desktop"),
 ]
 
 ///|
@@ -158,7 +158,7 @@ async fn publish_all() -> Unit {
 /// Retry that exact availability error with the same bounded network backoff.
 async fn verify_cli(version : String) -> Unit {
   let (code, out) = with_retry("verify published CLI", () => {
-    output_in(".", "moonx", ["moonrockz/moonbase-cli@\{version}", "version"])
+    output_in(".", "moonx", ["moonrockz/mission-control-cli@\{version}", "version"])
   })
   if code != 0 {
     fail_with("the published CLI could not run: \{out.trim()}")

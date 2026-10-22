@@ -1,6 +1,6 @@
 # Agent Instructions
 
-This is a [MoonBit](https://docs.moonbitlang.com) monorepo for Moonbase. Read [README.md](README.md) for the layout.
+This is a [MoonBit](https://docs.moonbitlang.com) monorepo for Mission Control. Read [README.md](README.md) for the layout.
 
 ## Toolchain
 
@@ -60,20 +60,20 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 
 ## Product layout
 
-- `pkgs/contracts` (`moonrockz/moonbase-contracts`) holds the commands the CLI, the web UI and the desktop shell share. `version()` matches the workspace version.
-- `pkgs/mdc` (`moonrockz/moonbase-mdc`) adds YAML frontmatter to cmark documents and exposes immutable cursors, visitors, folds and bottom-up reduction for downstream format modules such as OKF.
-- `pkgs/ears` (`moonrockz/moonbase-ears`) parses immutable EARS requirements and extracts specifications from plain text, Markdown and existing MDC documents, retaining diagnostics and source origins.
-- `pkgs/notebooks` (`moonrockz/notebooks`) provides shared typed cursors, navigation and traversal. Its `nbformat` package represents Jupyter v4 notebooks, and `dib` represents .NET Interactive source notebooks with kernel selectors, metadata and directives. This module deliberately omits the `moonbase-` prefix so it can move to its own repository.
-- `tests` (`moonrockz/moonbase-tests`) contains acceptance suites and property laws. It is a workspace member and is excluded from both publish lists.
-- `apps/cli` (`moonrockz/moonbase-cli`) is the `moonbase` command. `preferred_target` is `wasm`, so `moonx` runs it.
-- `apps/web` (`moonrockz/moonbase-web`) is the Rabbita page. It is JavaScript only and mounts into the element `app`.
-- `apps/desktop` (`moonrockz/moonbase-desktop`) defines the Proton command `moonbase.version` and the HTML document. It imports `moonbit-community/proton_contract`. It does not import `moonbit-community/proton`, because that link needs the CEF SDK.
+- `pkgs/contracts` (`moonrockz/mission-control-contracts`) holds the commands the CLI, the web UI and the desktop shell share. `version()` matches the workspace version.
+- `pkgs/mdc` (`moonrockz/mdc`) adds YAML frontmatter to cmark documents and exposes immutable cursors, visitors, folds and bottom-up reduction for downstream format modules such as OKF.
+- `pkgs/ears` (`moonrockz/ears`) parses immutable EARS requirements and extracts specifications from plain text, Markdown and existing MDC documents, retaining diagnostics and source origins.
+- `pkgs/notebooks` (`moonrockz/notebooks`) provides shared typed cursors, navigation and traversal. Its `nbformat` package represents Jupyter v4 notebooks, and `dib` represents .NET Interactive source notebooks with kernel selectors, metadata and directives. This module deliberately omits the `mission-control-` prefix so it can move to its own repository.
+- `tests` (`moonrockz/mission-control-tests`) contains acceptance suites and property laws. It is a workspace member and is excluded from both publish lists.
+- `apps/cli` (`moonrockz/mission-control-cli`) is the `mission-control` command. `preferred_target` is `wasm`, so `moonx` runs it.
+- `apps/web` (`moonrockz/mission-control-web`) is the Rabbita page. It is JavaScript only and mounts into the element `app`.
+- `apps/desktop` (`moonrockz/mission-control-desktop`) defines the Proton command `mission-control.version` and the HTML document. It imports `moonbit-community/proton_contract`. It does not import `moonbit-community/proton`, because that link needs the CEF SDK.
 
 `apps/web` sets `supported_targets = "js"` in `moon.mod` and in `moon.pkg`. `scripts/test.mbtx` reads the `moon.pkg` line and skips the package on other targets.
 
 ## Release process
 
-Moonbase publishes to mooncakes.io and GitHub Releases, and records every release in `CHANGELOG.md`. The published modules are `moonrockz/moonbase-contracts`, `moonrockz/moonbase-mdc`, `moonrockz/moonbase-ears`, `moonrockz/notebooks`, `moonrockz/moonbase-cli`, `moonrockz/moonbase-web` and `moonrockz/moonbase-desktop`.
+Mission Control publishes to mooncakes.io and GitHub Releases, and records every release in `CHANGELOG.md`. The published modules are `moonrockz/mission-control-contracts`, `moonrockz/mdc`, `moonrockz/ears`, `moonrockz/notebooks`, `moonrockz/mission-control-cli`, `moonrockz/mission-control-web` and `moonrockz/mission-control-desktop`.
 
 - `mise run release:status` checks that main, the tags, the GitHub release and mooncakes.io agree. Each problem it prints names the command that fixes it.
 - All modules share one version. The root `moon.mod` is the source of truth. `mise run validate:versions` fails when a module, a sibling import or a `version()` string has another version. `moonx scripts/versions.mbtx set X.Y.Z` rewrites them. The first release is `0.0.1`.

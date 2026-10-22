@@ -4,7 +4,7 @@
 /// `build` cross-compiles four native binaries with zig and builds the two wasm files. It does not build
 /// windows-x64: a cross-built Windows binary reads its arguments wrongly, because moon picks the `platform`
 /// setting of `core` from the host OS. `build-windows` builds that binary natively and runs on Windows only.
-/// `pack` needs all five binaries. It writes the eight release files to `dist/`: five archives, `moonbase.wasm`, `moonbase-gc.wasm`
+/// `pack` needs all five binaries. It writes the eight release files to `dist/`: five archives, `mission-control.wasm`, `mission-control-gc.wasm`
 /// and `checksums.txt`. With no argument, the script runs `build` and then `pack`.
 ///
 /// Usage: `mise run build:release`, `mise run release:assets`, or `moonx scripts/dist.mbtx [build|build-windows|pack]`.
@@ -36,11 +36,11 @@ let package_path : String = "apps/cli"
 
 ///|
 /// The base name of the executable that moon writes.
-let exe_stem : String = "moonbase-cli"
+let exe_stem : String = "mission-control-cli"
 
 ///|
 /// The name of the executable inside each archive.
-let bin : String = "moonbase"
+let bin : String = "mission-control"
 
 ///|
 let targets : Array[String] = [
@@ -57,10 +57,10 @@ let cross_targets : Array[String] = [
 let windows_target : String = "windows-x64"
 
 ///|
-let wasm_name : String = "moonbase.wasm"
+let wasm_name : String = "mission-control.wasm"
 
 ///|
-let wasm_gc_name : String = "moonbase-gc.wasm"
+let wasm_gc_name : String = "mission-control-gc.wasm"
 
 ///|
 let checksums_name : String = "checksums.txt"
@@ -83,9 +83,9 @@ fn is_windows(target : String) -> Bool {
 /// The archive file name of one target.
 fn archive_name(target : String) -> String {
   if is_windows(target) {
-    "moonbase-\{target}.zip"
+    "mission-control-\{target}.zip"
   } else {
-    "moonbase-\{target}.tar.gz"
+    "mission-control-\{target}.tar.gz"
   }
 }
 
