@@ -1657,9 +1657,9 @@ impl @moonspec.World for ReleaseWorld with fn configure(self, setup) {
     let source = self.dist_source
     for name in release_assets {
       // `mission-control-<target>.tar.gz` and `.zip` names are built from the target; check the target part.
-      // `mission-control-` is 9 characters.
+      let prefix = "mission-control-"
       let found = if name.has_suffix(".tar.gz") || name.has_suffix(".zip") {
-        let target = name[:name.length() - (if name.has_suffix(".zip") { 4 } else { 7 })][9:].to_owned()
+        let target = name[:name.length() - (if name.has_suffix(".zip") { 4 } else { 7 })][prefix.length():].to_owned()
         source.contains("\"\{target}\"")
       } else {
         source.contains("\"\{name}\"")
