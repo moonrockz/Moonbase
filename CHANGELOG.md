@@ -18,6 +18,10 @@ Replace the `moonrockz/moonbase-*` dependencies with these names.
 This repository no longer publishes `moonrockz/notebooks`. Use the module that
 moonrockz/moon-lander publishes.
 
+### 🐛 Bug fixes
+
+- *(release)* Set the version in every version assertion ([#9](https://github.com/moonrockz/mission-control/pull/9)) by @DamianReeves
+
 ### 🚜 Refactoring
 
 - Rename Moonbase to Mission Control ([#6](https://github.com/moonrockz/mission-control/pull/6)) by @DamianReeves
