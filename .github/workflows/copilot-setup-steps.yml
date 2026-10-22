@@ -1,0 +1,39 @@
+# Prepares the environment of the GitHub Copilot coding agent. The shared setup action installs
+# the toolchain pinned in .config/mise/config.toml, which includes the OpenSpec CLI, so the agent
+# can run `openspec`, `mise run check` and the other tasks.
+
+name: Copilot Setup Steps
+
+# Runs automatically when changed (for validation) and can be triggered manually.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+permissions:
+  contents: read
+
+env:
+  MISE_EXPERIMENTAL: 'true'
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` for Copilot coding agent to pick it up.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install mise and the pinned toolchain
+        uses: ./.github/actions/setup
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify OpenSpec CLI
+        run: openspec --version

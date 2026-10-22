@@ -58,6 +58,26 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 - Write these documents as standalone HTML, not Markdown: one file with inline CSS that works in light and dark mode, and inline SVG for diagrams.
 - Never put a spec or plan under `docs/`, and never `git add` anything under `.dev/`.
 
+## Requirements and design (OpenSpec)
+
+`openspec/` holds the committed requirements (`openspec/specs/`) and change proposals (`openspec/changes/`). mise pins the OpenSpec CLI. `openspec/config.yaml` gives the project context and the rules for each artifact. Use OpenSpec for requirements and design that the team keeps. Use `.dev/` only for scratch work.
+
+- Start a change with the `openspec-propose` skill, then use `openspec-apply-change` and `openspec-archive-change`. The other skills are `openspec-explore`, `openspec-update-change` and `openspec-sync-specs`.
+- Each agent reads the skills from its own folder:
+
+  | Agent | Skills | Start a change |
+  | --- | --- | --- |
+  | Claude Code | `.claude/skills/` | `/openspec-propose` |
+  | Codex | `.agents/skills/` | `$openspec-propose` |
+  | Cursor | `.cursor/skills/` | `/openspec-propose` |
+  | Grok Build | `.grok/skills/` | `/openspec-propose` |
+  | GitHub Copilot | `.github/skills/`, `.github/agents/openspec.agent.md` | `/openspec-propose` |
+  | Muse | `.agents/skills/` | the `openspec-propose` skill |
+
+- The Copilot coding agent runs `.github/workflows/copilot-setup-steps.yml`, which installs the pinned toolchain with the shared setup action.
+- Do not edit the generated skill files. To upgrade OpenSpec, change its version in `.config/mise/config.toml` and run `mise install`. Then run `openspec update`, which regenerates the files for every agent.
+- Run `openspec validate --all --strict` before you push a change to `openspec/`.
+
 ## Product layout
 
 - `pkgs/contracts` (`moonrockz/mission-control-contracts`) holds the commands the CLI, the web UI and the desktop shell share. `version()` matches the workspace version.

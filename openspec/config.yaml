@@ -1,0 +1,54 @@
+schema: spec-driven
+githubCopilot:
+  cloudAgent: true
+
+context: |
+  Mission Control is a MoonBit monorepo: shared contracts, a CLI, a Rabbita web
+  UI, a Proton desktop shell, and the moonrockz/mdc and moonrockz/ears libraries.
+  Code must build and test on the wasm, wasm-gc, js and native targets, except
+  apps/web, which is js only. Use a functional core with an imperative shell
+  for I/O, and immutable public values.
+  All published modules share one version, set by the release scripts.
+  Beads (bd) tracks implementation work. OpenSpec holds requirements and design.
+  Write all artifacts in ASD-STE100 Simplified Technical English.
+
+rules:
+  proposal:
+    - State what is out of scope.
+    - Name each published module that the change affects.
+  specs:
+    - Write each requirement in EARS form, with SHALL in upper case.
+  tasks:
+    - Group tasks into story-sized units. Each group names its beads issue ID once one exists.
+    - Put acceptance tests in tests/<area>-acceptance/ and property laws in tests/<area>-laws/.
+
+# Project context (optional)
+# Add only constraints that should guide OpenSpec artifacts and workflows.
+# Include constraints an agent cannot infer by reading the code.
+# Keep general project documentation and discoverable codebase facts out.
+# Example:
+#   context: |
+#     Designs and tasks must cover Windows, macOS, and Linux
+#     Write all artifacts in Spanish
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
