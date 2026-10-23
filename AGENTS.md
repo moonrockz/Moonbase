@@ -21,7 +21,7 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 
 ## Pre-push checks
 
-`mise run lint` and `mise run validate` must pass before a push. The git hooks are managed by [lefthook](https://lefthook.dev/) and defined in `lefthook.yml`. Install them once with `mise run hooks:install`. The pre-commit hook runs `moon fmt --check` and `moon check --deny-warn`. The pre-push hook runs lint, validate and test. `mise run check` runs lint, validate, test and build, which is what CI runs.
+`mise run lint` and `mise run validate` must pass before a push. `mise run test:browser` runs the OKF browser store checks in headless Chromium (`-- --install` installs Chromium first). The git hooks are managed by [lefthook](https://lefthook.dev/) and defined in `lefthook.yml`. Install them once with `mise run hooks:install`. The pre-commit hook runs `moon fmt --check` and `moon check --deny-warn`. The pre-push hook runs lint, validate and test. `mise run check` runs lint, validate, test and build, which is what CI runs.
 
 ## Working rules
 
@@ -83,6 +83,7 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 - `pkgs/contracts` (`moonrockz/mission-control-contracts`) holds the commands the CLI, the web UI and the desktop shell share. `version()` matches the workspace version.
 - `pkgs/mdc` (`moonrockz/mdc`) adds YAML frontmatter to cmark documents and exposes immutable cursors, visitors, folds and bottom-up reduction for downstream format modules such as OKF.
 - `pkgs/ears` (`moonrockz/ears`) parses immutable EARS requirements and extracts specifications from plain text, Markdown and existing MDC documents, retaining diagnostics and source origins.
+- `pkgs/okf` (`moonrockz/okf`) reads, queries, validates and edits OKF v0.2 bundles on top of `moonrockz/mdc`. The core is pure and synchronous; storage, index and search providers are async traits in `moonrockz/okf/provider`, with in-memory, file system (`fs`, native and wasm), Node.js (`fs/node`) and browser (`fs/browser`) stores. Producer conventions go in profiles; `moonrockz/okf/openspec` is the shipped OpenSpec profile. The morphir profile exists only in `tests/okf-acceptance`.
 - `tests` (`moonrockz/mission-control-tests`) contains acceptance suites and property laws. It is a workspace member and is excluded from both publish lists.
 - `apps/cli` (`moonrockz/mission-control-cli`) is the `mission-control` command. `preferred_target` is `wasm`, so `moonx` runs it.
 - `apps/web` (`moonrockz/mission-control-web`) is the Rabbita page. It is JavaScript only and mounts into the element `app`.
@@ -92,7 +93,7 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 
 ## Release process
 
-Mission Control publishes to mooncakes.io and GitHub Releases, and records every release in `CHANGELOG.md`. The published modules are `moonrockz/mission-control-contracts`, `moonrockz/mdc`, `moonrockz/ears`, `moonrockz/mission-control-cli`, `moonrockz/mission-control-web` and `moonrockz/mission-control-desktop`.
+Mission Control publishes to mooncakes.io and GitHub Releases, and records every release in `CHANGELOG.md`. The published modules are `moonrockz/mission-control-contracts`, `moonrockz/mdc`, `moonrockz/ears`, `moonrockz/okf`, `moonrockz/mission-control-cli`, `moonrockz/mission-control-web` and `moonrockz/mission-control-desktop`.
 
 - `mise run release:status` checks that main, the tags, the GitHub release and mooncakes.io agree. Each problem it prints names the command that fixes it.
 - All modules share one version. The root `moon.mod` is the source of truth. `mise run validate:versions` fails when a module, a sibling import or a `version()` string has another version. `moonx scripts/versions.mbtx set X.Y.Z` rewrites them. The first release is `0.0.1`.

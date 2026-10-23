@@ -426,3 +426,25 @@ pub extend PathListResolver with LinkResolver::{exists}
 
 ///|
 pub extend KnowledgeResolver with LinkResolver::{exists}
+
+///|
+/// True when a bundle-rooted or relative link climbs above the bundle root,
+/// whether or not its target exists.
+pub fn link_escapes(
+  bundle : Bundle,
+  doc : Document,
+  link : Link,
+  options~ : Options = bundle.options(),
+) -> Bool {
+  match link.kind {
+    External | Anchor => false
+    BundleRooted | Relative => {
+      let base = if link.kind is BundleRooted || options.link_base is BundleRoot {
+        ""
+      } else {
+        doc.path().directory().join("/")
+      }
+      normalize_path(base + "/" + link.path_part()).above > 0
+    }
+  }
+}

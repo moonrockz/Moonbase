@@ -170,6 +170,30 @@ jobs:
       - name: Run the task script tests
         run: mise run test:scripts
 
+  test-browser:
+    name: Test browser (chromium)
+    runs-on: ubuntu-latest
+    needs: [lint]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install mise and the pinned toolchain
+        uses: ./.github/actions/setup
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # The key follows the Playwright version that .config/mise/config.toml pins.
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('.config/mise/config.toml') }}
+
+      - name: Run the OKF browser store checks in headless Chromium
+        run: mise run test:browser -- --install
+
   # The only check that branch protection needs. Add every new job to `needs`.
   # `if: always()` is required: without it this job is skipped when a needed job fails, and
   # GitHub counts a skipped required check as passed.
@@ -178,7 +202,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: always()
-    needs: [lint, build, build-windows, test, cross-build, test-native-zig, test-scripts]
+    needs: [lint, build, build-windows, test, cross-build, test-native-zig, test-scripts, test-browser]
     steps:
       - name: Check that every job passed or was skipped
         env:

@@ -160,7 +160,8 @@ fn check_unknown_capability(ctx : @okf.ValidationContext) -> Array[@okf.Issue] {
 }
 
 ///|
-/// The OpenSpec checks, which mirror `openspec validate --strict`.
+/// The OpenSpec checks: the three that `openspec validate --strict` runs, and
+/// the two that OpenSpec runs only when it archives a change.
 pub fn openspec_checks() -> @okf.RuleSet {
   @okf.RuleSet("openspec", [
     @okf.Rule("openspec-requirement-no-scenario", Error, check_no_scenario),

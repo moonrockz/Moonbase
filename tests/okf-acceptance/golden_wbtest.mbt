@@ -111,3 +111,21 @@ test "broken links and drift match morphir kb check" {
   assert_eq(as_morphir_rows(report, checks), golden_findings(checks))
   assert_eq(report.count(Error), 32)
 }
+
+///|
+test "the OKF sample bundles report no conformance error" {
+  for name in ["acme_retail", "ga4"] {
+    let set = load_fixture("okf-fixtures/okf-samples/" + name)
+    let knowledge = @okf.Knowledge([@okf.load_bundle(set, name~)])
+    let report = @okf.validate(
+      knowledge,
+      [@okf.okf_v02_conformance()],
+      @okf.FixedClock::at("2026-10-23T00:00:00Z"),
+    )
+    assert_eq(
+      report.findings().map(f => f.rule + " " + f.path).iter().collect(),
+      [],
+      msg=name,
+    )
+  }
+}

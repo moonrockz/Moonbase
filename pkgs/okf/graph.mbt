@@ -58,9 +58,8 @@ pub fn Graph::build(
         }
       }
       for link in links {
-        let (target, escapes) = target_of(
-          knowledge, bundle, doc, link, resolver,
-        )
+        let (target, _) = target_of(knowledge, bundle, doc, link, resolver)
+        let escapes = link_escapes(bundle, doc, link)
         let index = edges.length()
         edges.push({ from, link, target, escapes, })
         match outbound.get(from) {

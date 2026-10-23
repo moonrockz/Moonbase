@@ -77,3 +77,37 @@ mise exec -- moon test tests/ears-acceptance tests/ears-laws --target native
 mise exec -- moon test tests/ears-laws --target wasm
 mise exec -- moon test tests/ears-laws --target wasm-gc
 ```
+
+## OKF tests
+
+`okf-acceptance/features/` holds the Gherkin scenarios for OKF documents,
+relationships, indexes and queries, validation and editing. The suite also
+holds two golden checks and the morphir reference profile:
+
+- `golden_wbtest.mbt` compares discovery, broken links and description drift
+  with the morphir CLI output recorded in `okf-fixtures/morphir/golden/`.
+- `morphir_profile_wbtest.mbt` defines a morphir profile with the public
+  profile API only. It reproduces `morphir kb check` and
+  `morphir kb decision list` exactly, and checks the Intent register
+  transitions.
+
+`okf-laws/` runs seven properties on all four targets: frontmatter keys and
+scalar text survive loading, Concept IDs convert both ways, each resolved link
+has one matching backlink, a key edit changes only its line and repeats as a
+no-op, a generated index lists every concept, supersession checks match a
+model, and an OpenSpec import and export keeps every file.
+
+`okf-openspec-acceptance/` loads this repository's own `openspec/` tree with
+the OpenSpec profile, checks it, and round-trips it through a native bundle.
+
+`okf-browser/` is a page that runs the store conformance checks against the
+origin private file system. `mise run test:browser` builds it and runs it in
+headless Chromium with Playwright.
+
+`okf-fixtures/README.md` names the source and the commit of each fixture.
+
+```shell
+mise exec -- moon test tests/okf-acceptance tests/okf-openspec-acceptance --target js
+mise exec -- moon test tests/okf-laws --target wasm-gc
+mise run test:browser
+```

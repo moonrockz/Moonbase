@@ -1,0 +1,9 @@
+pkgtype(kind: "executable")
+
+import {
+  "moonbitlang/async",
+  "moonrockz/okf/fs/browser",
+  "moonrockz/okf/conformance",
+}
+
+supported_targets = "js"

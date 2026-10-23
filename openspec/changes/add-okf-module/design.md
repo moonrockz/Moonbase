@@ -40,14 +40,14 @@ These facts from the current code and from research shape the approach:
 | `moonrockz/okf` | Model, frontmatter, options, links, graph, index and log models, queries, validation, provider and profile traits | all |
 | `moonrockz/okf/edit` | Text edits and edit plans | all |
 | `moonrockz/okf/provider` | Async provider traits, store loading and plan application | native, wasm, js |
-| `moonrockz/okf/memory` | In-memory document store, index provider and search provider; fixed clock | all (async parts: native, wasm, js) |
+| `moonrockz/okf/memory` | In-memory document store, index provider and search provider | all (async parts: native, wasm, js) |
 | `moonrockz/okf/conformance` | Reusable provider conformance tests | native, wasm, js |
 | `moonrockz/okf/fs` | Filesystem store over `moonbitlang/async/fs` | native, wasm |
 | `moonrockz/okf/fs/node` | Filesystem store over `node:fs/promises` | js |
 | `moonrockz/okf/fs/browser` | Store over the File System Access API | js |
 | `moonrockz/okf/openspec` | OpenSpec profile, import and export | all |
 
-The synchronous traits (`LinkResolver`, `Clock`, `Profile`) live in the core package. The async traits live in `moonrockz/okf/provider`, so that the core keeps no dependency on the async runtime and builds on `wasm-gc`. Alternative: one package per concern (`okf/links`, `okf/graph`). Rejected for now: these concerns share the document model closely, and splitting them adds public surface without a consumer. Alternative: several modules. Rejected: one version and one publish entry are simpler, and consumers import packages selectively.
+The synchronous traits (`LinkResolver`, `Clock`, `Profile`) and the `FixedClock` live in the core package. The async traits live in `moonrockz/okf/provider`, so that the core keeps no dependency on the async runtime and builds on `wasm-gc`. Alternative: one package per concern (`okf/links`, `okf/graph`). Rejected for now: these concerns share the document model closely, and splitting them adds public surface without a consumer. Alternative: several modules. Rejected: one version and one publish entry are simpler, and consumers import packages selectively.
 
 ### D2. Build on `moonrockz/mdc`, with a frontmatter span scanner
 
