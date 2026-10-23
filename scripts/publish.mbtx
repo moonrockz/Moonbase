@@ -25,6 +25,7 @@ let publish_list : Array[(String, String)] = [
   ("pkgs/contracts", "moonrockz/mission-control-contracts"),
   ("pkgs/mdc", "moonrockz/mdc"),
   ("pkgs/ears", "moonrockz/ears"),
+  ("pkgs/okf", "moonrockz/okf"),
   ("apps/cli", "moonrockz/mission-control-cli"),
   ("apps/web", "moonrockz/mission-control-web"),
   ("apps/desktop", "moonrockz/mission-control-desktop"),

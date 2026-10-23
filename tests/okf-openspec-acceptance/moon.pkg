@@ -1,0 +1,7 @@
+import {
+  "moonbitlang/x/fs",
+  "moonrockz/okf",
+  "moonrockz/okf/openspec",
+} for "wbtest"
+
+supported_targets = "js+native"

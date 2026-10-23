@@ -1,0 +1,61 @@
+///|
+/// Run the browser store checks in headless Chromium with Playwright.
+///
+/// Usage: `mise run test:browser [-- --install]`. It builds `tests/okf-browser`
+/// for js, copies the page to `_build/okf-browser/site`, and runs
+/// `tests/okf-browser/opfs.spec.cjs`. `--install` first installs Chromium and
+/// its system libraries with the Playwright CLI that mise pins.
+import {
+  "moonbitlang/async@0.22.5",
+  "moonbitlang/async@0.22.5/fs",
+  "moonbitlang/async@0.22.5/process",
+  "moonbitlang/async@0.22.5/stdio",
+  "moonbitlang/core/env",
+  "moonbitlang/x@0.5.5/sys",
+}
+
+///|
+let site : String = "_build/okf-browser/site"
+
+///|
+let built : String = "_build/js/debug/build/moonrockz/mission-control-tests/okf-browser/okf-browser.js"
+
+///|
+async fn run_or_exit(command : String, args : Array[String], env? : Map[String, String] = {}) -> Unit {
+  let code = @process.run(
+    command, args,
+    extra_env=env, stdout=@stdio.stdout, stderr=@stdio.stderr,
+  )
+  if code != 0 {
+    println("❌ \{command} \{args.join(" ")} failed")
+    @sys.exit(if code > 0 { code } else { 1 })
+  }
+}
+
+///|
+async fn main {
+  let args = @env.args()[1:]
+  println("🔨 Building the browser page...")
+  run_or_exit("moon", ["build", "tests/okf-browser", "--target", "js"])
+  @fs.mkdir(site, recursive=true, allow_exist=true)
+  @fs.write_file(site + "/okf-browser.js", @fs.read_file(built).binary(), create_mode=CreateOrTruncate)
+  @fs.write_file(
+    site + "/index.html",
+    @fs.read_file("tests/okf-browser/index.html").binary(),
+    create_mode=CreateOrTruncate,
+  )
+  // `require("@playwright/test")` resolves through NODE_PATH to the package that mise installs.
+  let (_, out) = @process.collect_stdout("mise", ["where", "npm:@playwright/test"])
+  let package_dir = out.text().trim(chars=" \n\r").to_owned()
+  let env : Map[String, String] = {
+    "NODE_PATH": package_dir + "/lib/node_modules",
+    "OKF_BROWSER_DIR": @fs.realpath(site),
+  }
+  if args.contains("--install") {
+    println("📦 Installing Chromium...")
+    run_or_exit("playwright", ["install", "--with-deps", "chromium"], env~)
+  }
+  println("🧪 Running the browser checks...")
+  run_or_exit("playwright", ["test", "-c", "tests/okf-browser/playwright.config.cjs"], env~)
+  println("✅ The browser checks passed")
+}

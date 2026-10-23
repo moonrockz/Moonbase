@@ -1,0 +1,690 @@
+[
+  {
+    "id": "0001",
+    "slug": "0001-the-command-line-is-a-configuration-layer",
+    "title": "The command line is a configuration layer",
+    "description": "Morphir chose to make command-line flags an ordinary layer in the configuration stack, above the environment, rather than precedence logic written again at each call site. Implementation is pending.",
+    "bundle": "morphir/morphir-cli",
+    "path": "/decisions/0001-the-command-line-is-a-configuration-layer.md",
+    "state": "Accepted",
+    "decided": "2026-09-20",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "cli",
+      "configuration",
+      "layering",
+      "precedence",
+      "provenance",
+      "starbase"
+    ]
+  },
+  {
+    "id": "0002",
+    "slug": "0002-the-session-owns-the-application-lifecycle",
+    "title": "The session owns the application lifecycle",
+    "description": "Morphir chose to have the CLI session implement every starbase phase and hold phase-produced data in a discriminated union, so command code cannot run without the state its phase produced. Implementation is pending.",
+    "bundle": "morphir/morphir-cli",
+    "path": "/decisions/0002-the-session-owns-the-application-lifecycle.md",
+    "state": "Accepted",
+    "decided": "2026-09-20",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "cli",
+      "lifecycle",
+      "starbase",
+      "session",
+      "typestate",
+      "configuration"
+    ]
+  },
+  {
+    "id": "0003",
+    "slug": "0003-semver-is-the-default-contract-versioning-scheme",
+    "title": "SemVer is the default contract versioning scheme",
+    "description": "Every versioned contract Morphir defines uses SemVer 2.0 strings by default, with prerelease versions that match only exactly, so a contract can be refined as a draft and then frozen. Morphir IR formatVersion is not affected.",
+    "bundle": "morphir/morphir-cli",
+    "path": "/decisions/0003-semver-is-the-default-contract-versioning-scheme.md",
+    "state": "Accepted",
+    "decided": "2026-09-22",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "versioning",
+      "semver",
+      "compatibility",
+      "protocol",
+      "schema",
+      "mep",
+      "workspace",
+      "distribution"
+    ]
+  },
+  {
+    "id": "0001",
+    "slug": "0001-two-elm-frontend-providers",
+    "title": "Two Elm frontend providers",
+    "description": "The CLI keeps morphir-elm as the default Elm frontend and morphir-elm-native as an opt-in provider until the native one reaches value and type-inference parity.",
+    "bundle": "morphir/morphir-extensions",
+    "path": "/decisions/0001-two-elm-frontend-providers.md",
+    "state": "Accepted",
+    "decided": "2026-09-18",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "elm",
+      "extensions",
+      "frontend",
+      "mep"
+    ]
+  },
+  {
+    "id": "0002",
+    "slug": "0002-extension-capability-sets",
+    "title": "Extensions declare IR capability sets",
+    "description": "Every extension declares which IR features it handles, in a vocabulary the IR specification owns and the Morphir Compatibility Kit verifies, so the toolchain can plan and check a pipeline instead of discovering gaps at run time.",
+    "bundle": "morphir/morphir-extensions",
+    "path": "/decisions/0002-extension-capability-sets.md",
+    "state": "Accepted",
+    "decided": "2026-09-19",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "extensions",
+      "capabilities",
+      "mck",
+      "ir",
+      "mep",
+      "frontend",
+      "backend",
+      "transform"
+    ]
+  },
+  {
+    "id": "0003",
+    "slug": "0003-the-guest-authors-its-capability-statement",
+    "title": "The guest authors its capability statement",
+    "description": "The extension itself is the only author of its capability statement, which packaging captures with morphir.extension.describe, publish accepts for process bundles, install probes on the selected artifact, and each artifact carries separately.",
+    "bundle": "morphir/morphir-extensions",
+    "path": "/decisions/0003-the-guest-authors-its-capability-statement.md",
+    "state": "Accepted",
+    "decided": "2026-09-22",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "extensions",
+      "capabilities",
+      "mep",
+      "distribution",
+      "release"
+    ]
+  },
+  {
+    "id": "0004",
+    "slug": "0004-readers-ignore-unknown-members-unless-critical",
+    "title": "Readers ignore unknown members unless critical",
+    "description": "Every reader of extension formats ignores unknown members unless they are marked critical, accepts the current and previous released major and listed drafts, and converts old records, so host and extension changes ship on their own after one bootstrap host release.",
+    "bundle": "morphir/morphir-extensions",
+    "path": "/decisions/0004-readers-ignore-unknown-members-unless-critical.md",
+    "state": "Accepted",
+    "decided": "2026-09-22",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "extensions",
+      "capabilities",
+      "mep",
+      "distribution",
+      "release",
+      "compatibility"
+    ]
+  },
+  {
+    "id": "0005",
+    "slug": "0005-elm-providers-normalize-explicit-package-names",
+    "title": "Elm providers normalize explicit package names",
+    "description": "Every Elm workspace provider reads an explicit package name with both `.` and `/` as segment separators and reports one normal form, lowercase words joined by `-` and segments joined by `/`, which keeps the Morphir IR package path unchanged.",
+    "bundle": "morphir/morphir-extensions",
+    "path": "/decisions/0005-elm-providers-normalize-explicit-package-names.md",
+    "state": "Accepted",
+    "decided": "2026-09-23",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "extensions",
+      "elm",
+      "workspace",
+      "discovery",
+      "package-name"
+    ]
+  },
+  {
+    "id": "0006",
+    "slug": "0006-the-describe-fallback-reports-only-what-a-session-reports",
+    "title": "The describe fallback reports only what a session reports",
+    "description": "A refusal before initialize has its own MEP error code, -32014, and a statement the host builds from a fallback session holds only what that session reports, with no requires or critical members.",
+    "bundle": "morphir/morphir-extensions",
+    "path": "/decisions/0006-the-describe-fallback-reports-only-what-a-session-reports.md",
+    "state": "Accepted",
+    "decided": "2026-09-23",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "extensions",
+      "capabilities",
+      "mep",
+      "protocol",
+      "compatibility"
+    ]
+  },
+  {
+    "id": "0007",
+    "slug": "0007-extensions-make-capability-claims",
+    "title": "Extensions make capability claims",
+    "description": "The document an extension authors about itself is a capability claim set made of claims, not a capability statement; the version-2 draft formats rename their members and move to the next draft, and readers still accept the draft.1 spelling.",
+    "bundle": "morphir/morphir-extensions",
+    "path": "/decisions/0007-extensions-make-capability-claims.md",
+    "state": "Accepted",
+    "decided": "2026-09-24",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "extensions",
+      "capabilities",
+      "mep",
+      "distribution",
+      "compatibility",
+      "naming"
+    ]
+  },
+  {
+    "id": "0008",
+    "slug": "0008-beta10-claims-gate-dispositions",
+    "title": "Beta.10 keeps the claims drafts and current probe boundaries",
+    "description": "Beta.10 records parsed-value claim comparison and WASM probe limits, defers signatures and process sandboxing, and retains the draft formats.",
+    "bundle": "morphir/morphir-extensions",
+    "path": "/decisions/0008-beta10-claims-gate-dispositions.md",
+    "state": "Accepted",
+    "decided": "2026-10-21",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "extensions",
+      "capabilities",
+      "distribution",
+      "compatibility",
+      "release"
+    ]
+  },
+  {
+    "id": "0001",
+    "slug": "0001-name-canonicalization-and-initialism-encoding",
+    "title": "Names encode initialisms as uppercase segments",
+    "description": "IR v4 marks an initialism by writing its canonical segment in uppercase, and projects names onto the document tree through a defined escape.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0001-name-canonicalization-and-initialism-encoding.md",
+    "state": "Accepted",
+    "decided": "2026-08-30",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "naming",
+      "canonicalization",
+      "filesystem",
+      "uri"
+    ]
+  },
+  {
+    "id": "0002",
+    "slug": "0002-both-name-encodings-behind-one-switch",
+    "title": "Both name encodings are implemented, and the switch gates only the encoder",
+    "description": "Implementations carry both canonical name encodings; a compile-time constant selects which one is written, while readers always accept both.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0002-both-name-encodings-behind-one-switch.md",
+    "state": "Accepted",
+    "decided": "2026-08-30",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "naming",
+      "implementation",
+      "compatibility"
+    ]
+  },
+  {
+    "id": "0003",
+    "slug": "0003-the-naming-codec-is-modelled-in-morphir",
+    "title": "The naming codec is modelled in Morphir, with a host-language bootstrap",
+    "description": "The v4 naming codec is expressed as a Morphir model in finos/morphir and drives a shared conformance corpus, while one host implementation remains as the bootstrap.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0003-the-naming-codec-is-modelled-in-morphir.md",
+    "state": "Proposed",
+    "decided": "2026-08-30",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "naming",
+      "dogfooding",
+      "conformance",
+      "testing"
+    ]
+  },
+  {
+    "id": "0004",
+    "slug": "0004-record-fields-are-spelled-under-a-fields-member",
+    "title": "Record fields are spelled under a fields member",
+    "description": "In IR v4, a Record type or value writes its fields under a fields member, never as the wrapper's direct member map, so attributes can sit beside them without ambiguity.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0004-record-fields-are-spelled-under-a-fields-member.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "encoding",
+      "record",
+      "mck"
+    ]
+  },
+  {
+    "id": "0005",
+    "slug": "0005-attributes-are-an-optional-first-member-of-every-node-payload",
+    "title": "Attributes are an optional first member of every node payload",
+    "description": "Every IR v4 type, value, and pattern node has a compact spelling and an expanded spelling whose payload carries attributes as its optional first member; writers use the compact form when attributes are empty.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0005-attributes-are-an-optional-first-member-of-every-node-payload.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "encoding",
+      "attributes",
+      "mck"
+    ]
+  },
+  {
+    "id": "0006",
+    "slug": "0006-node-member-names-follow-the-schema-with-a-one-release-window",
+    "title": "Node member names follow the schema, with a one-release compatibility window",
+    "description": "IR v4 value and type nodes use the member names the v4 schema and the Morphir Compatibility Kit pin; the spellings the Rust CLI and older spec examples wrote are accepted on input for one release, then refused.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0006-node-member-names-follow-the-schema-with-a-one-release-window.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "encoding",
+      "vocabulary",
+      "mck",
+      "compatibility"
+    ]
+  },
+  {
+    "id": "0007",
+    "slug": "0007-parameters-are-declared-and-arguments-are-applied",
+    "title": "Parameters are declared and arguments are applied",
+    "description": "IR v4 names a declared slot a parameter and an applied value an argument: a Function type has a parameterType, constructors have parameters, while Apply, Reference and Annotation keep their arguments; the input naming on definitions stays.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0007-parameters-are-declared-and-arguments-are-applied.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "encoding",
+      "vocabulary",
+      "parameters",
+      "arguments"
+    ]
+  },
+  {
+    "id": "0008",
+    "slug": "0008-hole-is-an-expression-native-and-external-are-definition-bodies",
+    "title": "Hole is an expression; native and external operations are definition bodies",
+    "description": "IR v4 keeps Hole as a value expression with an optional expectedType, removes the Native and External expressions, and makes ExternalBody a list of per-target bindings with an optional fallback body so Gleam-style externals encode faithfully.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0008-hole-is-an-expression-native-and-external-are-definition-bodies.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "encoding",
+      "hole",
+      "native",
+      "external",
+      "gleam",
+      "mck"
+    ]
+  },
+  {
+    "id": "0009",
+    "slug": "0009-bare-arrays-are-lists-and-bare-scalars-are-literals-at-value-position",
+    "title": "Bare arrays are lists and bare scalars are literals at value position",
+    "description": "In IR v4 value position, a bare array is a List, a bare boolean or number is a literal, a bare string is a Variable or Reference, and a Tuple always carries its wrapper; writers keep the wrapped forms as canonical.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0009-bare-arrays-are-lists-and-bare-scalars-are-literals-at-value-position.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "encoding",
+      "shorthand",
+      "list",
+      "tuple",
+      "yaml",
+      "mck"
+    ]
+  },
+  {
+    "id": "0010",
+    "slug": "0010-documentation-is-a-flattened-doc-member",
+    "title": "Documentation is a flattened doc member",
+    "description": "In IR v4, documentation is a doc member placed first beside a definition's or specification's variant, never a nested {doc, value} wrapper, and a document-tree node file carries it in exactly one place.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0010-documentation-is-a-flattened-doc-member.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "encoding",
+      "documentation",
+      "document-tree",
+      "mck"
+    ]
+  },
+  {
+    "id": "0011",
+    "slug": "0011-the-sdk-package-is-named-morphir-slash-sdk-uppercase",
+    "title": "The SDK package is named morphir/SDK",
+    "description": "The Morphir SDK's canonical v4 package name is morphir/SDK, because morphir-elm's Path.fromString splits SDK into single-letter words that decision 0001 decodes as an initialism; every morphir/sdk spelling in published v4 material is a different name and is rewritten.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0011-the-sdk-package-is-named-morphir-slash-sdk-uppercase.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "naming",
+      "sdk",
+      "mck"
+    ]
+  },
+  {
+    "id": "0012",
+    "slug": "0012-one-legacy-name-grammar-and-one-file-stem-definition",
+    "title": "One legacy name grammar and one FileStem definition",
+    "description": "Both IR v4 schemas use the core legacy word grammar ^[a-z0-9]+$, FileStem with its truncation suffix is defined once in the document-tree schema, pathBudget stays required, and ModuleManifestFile gains the fileNames map decision 0001 promised.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0012-one-legacy-name-grammar-and-one-file-stem-definition.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "naming",
+      "document-tree",
+      "schema",
+      "mck"
+    ]
+  },
+  {
+    "id": "0013",
+    "slug": "0013-document-literal-is-in-v4-with-a-raw-payload",
+    "title": "DocumentLiteral is in v4, with a raw payload and a deliberately small SDK",
+    "description": "IR v4.0.0 adds DocumentLiteral, a seventh literal holding a schema-less JSON-like tree typed as the opaque SDK type morphir/SDK:document#document; its payload is the document verbatim, it cannot be pattern matched, it refuses to downgrade, and the SDK exposes construction, inspection and navigation but no merge, equality or ordering.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0013-document-literal-is-in-v4-with-a-raw-payload.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "literal",
+      "document",
+      "sdk",
+      "mck"
+    ]
+  },
+  {
+    "id": "0014",
+    "slug": "0014-scope-of-v4-0-0-for-design-only-features",
+    "title": "Scope of v4.0.0 for the design-only features",
+    "description": "Layered decorations, $ref deduplication and the session journal are out of IR v4.0.0; $meta is reserved and ignored by readers; the books fixture migrates to the canonical product-ID spelling with no legacy-name compatibility rule.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0014-scope-of-v4-0-0-for-design-only-features.md",
+    "state": "Accepted",
+    "decided": "2026-09-04",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "scope",
+      "decorations",
+      "document-tree",
+      "mck"
+    ]
+  },
+  {
+    "id": "0015",
+    "slug": "0015-dependency-directories-are-nested-with-a-version-segment",
+    "title": "Dependency directories nest the package path and mark the version segment with @",
+    "description": "A document tree lays a dependency out as deps/<package path>/@<version>/<module path>/, where the segment beginning with @ ends the package path and carries the version, empty until the model has one; pkg/ keeps no segment because it holds exactly one package.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0015-dependency-directories-are-nested-with-a-version-segment.md",
+    "state": "Accepted",
+    "decided": "2026-09-15",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "document-tree",
+      "packages",
+      "naming",
+      "mck"
+    ]
+  },
+  {
+    "id": "0016",
+    "slug": "0016-support-tables-are-intervals-and-a-patch-changes-nothing-observable",
+    "title": "Support tables are intervals, and a patch changes nothing a reader can observe",
+    "description": "An implementation declares the IR format versions it reads as a union of intervals in Maven-style notation with one canonical spelling; a patch revision never changes what a reader accepts or a writer emits, a minor may, so the reference table is [3.0.0,3.1.0),[4.0.0,4.1.0) and a later minor fails with unsupported_format_version_minor.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0016-support-tables-are-intervals-and-a-patch-changes-nothing-observable.md",
+    "state": "Accepted",
+    "decided": "2026-09-16",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v4",
+      "versioning",
+      "format-version",
+      "mck"
+    ]
+  },
+  {
+    "id": "0017",
+    "slug": "0017-package-release-versions-belong-to-distribution-bindings",
+    "title": "Package release versions belong to distribution bindings",
+    "description": "Package release versions come from packaging and distribution bindings without adding versions to core IR definitions or references.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0017-package-release-versions-belong-to-distribution-bindings.md",
+    "state": "Accepted",
+    "decided": "2026-09-16",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "packages",
+      "distributions",
+      "versioning",
+      "mck"
+    ]
+  },
+  {
+    "id": "0018",
+    "slug": "0018-ir-3-1-adds-specs-and-v3-document-trees",
+    "title": "IR 3.1.0 adds a Specs distribution and v3 document trees",
+    "description": "IR format 3.1.0 is a minor revision of the classic IR that adds a v3 Specs distribution and JSON and YAML document trees for v3; writers emit the lowest version that fits, so a single-file Library stays 3, and the reference support table becomes [3.0.0,3.2.0),[4.0.0,4.1.0).",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0018-ir-3-1-adds-specs-and-v3-document-trees.md",
+    "state": "Accepted",
+    "decided": "2026-09-24",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "ir-v3",
+      "versioning",
+      "format-version",
+      "document-tree"
+    ]
+  },
+  {
+    "id": "0019",
+    "slug": "0019-native-metadata-uses-a-scoped-property-graph",
+    "title": "Native metadata uses a scoped property graph",
+    "description": "Native V4 metadata uses compact facts on Type and Value nodes, specification annotations, and document-level $meta graph statements; contexts expand names and assertion identity retains carrier ownership.",
+    "bundle": "morphir/morphir-ir",
+    "path": "/decisions/0019-native-metadata-uses-a-scoped-property-graph.md",
+    "state": "Accepted",
+    "decided": "2026-09-25",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "ir",
+      "metadata",
+      "linked-data",
+      "v4",
+      "decorators"
+    ]
+  },
+  {
+    "id": "0001",
+    "slug": "0001-package-compatibility-uses-the-shared-mck-core",
+    "title": "Package compatibility uses the shared TypeScript MCK core",
+    "description": "Package compatibility cases use the shared TypeScript MCK tooling and implementation adapters rather than separate compatibility runners.",
+    "bundle": "morphir/morphir-package-system",
+    "path": "/decisions/0001-package-compatibility-uses-the-shared-mck-core.md",
+    "state": "Superseded",
+    "decided": "2026-09-16",
+    "supersedes": [],
+    "superseded_by": "0003",
+    "reason": null,
+    "tags": [
+      "mck",
+      "packages",
+      "tooling",
+      "typescript",
+      "adapters"
+    ]
+  },
+  {
+    "id": "0002",
+    "slug": "0002-portable-restore-with-explicit-filesystem-assurance",
+    "title": "Portable restore with explicit filesystem assurance",
+    "description": "Portable restore targets Linux, macOS and Windows while preserving authentication and durable trust state.",
+    "bundle": "morphir/morphir-package-system",
+    "path": "/decisions/0002-portable-restore-with-explicit-filesystem-assurance.md",
+    "state": "Accepted",
+    "decided": "2026-09-17",
+    "supersedes": [],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "packages",
+      "restore",
+      "filesystem",
+      "security",
+      "mck"
+    ]
+  },
+  {
+    "id": "0003",
+    "slug": "0003-mck-tooling-lives-in-the-rust-morphir-cli",
+    "title": "MCK tooling lives in the Rust Morphir CLI",
+    "description": "finos/morphir owns all shared MCK tooling, written in Rust and delivered as `morphir mck`, with an explicit adapter on every run and CLI-managed kit vendoring.",
+    "bundle": "morphir/morphir-package-system",
+    "path": "/decisions/0003-mck-tooling-lives-in-the-rust-morphir-cli.md",
+    "state": "Accepted",
+    "decided": "2026-09-18",
+    "supersedes": [
+      "0001"
+    ],
+    "superseded_by": null,
+    "reason": null,
+    "tags": [
+      "mck",
+      "tooling",
+      "rust",
+      "cli",
+      "adapters",
+      "ir",
+      "packages"
+    ]
+  }
+]

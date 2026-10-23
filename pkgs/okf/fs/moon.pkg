@@ -1,0 +1,16 @@
+import {
+  "moonrockz/okf",
+  "moonrockz/okf/provider",
+  "moonbitlang/async/fs",
+}
+
+import {
+  "moonrockz/okf/fs",
+  "moonrockz/okf",
+  "moonrockz/okf/conformance",
+  "moonrockz/okf/provider",
+  "moonbitlang/async",
+  "moonbitlang/async/fs" @afs,
+} for "test"
+
+supported_targets = "native+wasm"

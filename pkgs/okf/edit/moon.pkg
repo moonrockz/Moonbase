@@ -1,0 +1,9 @@
+import {
+  "moonrockz/okf",
+  "moonbitlang/core/debug",
+}
+
+import {
+  "moonrockz/okf/edit",
+  "moonrockz/okf",
+} for "test"

@@ -1,0 +1,15 @@
+import {
+  "moonrockz/okf",
+  "moonrockz/okf/provider",
+  "moonbitlang/async/js_async",
+}
+
+import {
+  "moonrockz/okf",
+  "moonrockz/okf/fs/browser",
+  "moonrockz/okf/conformance",
+  "moonrockz/okf/provider",
+  "moonbitlang/async",
+} for "test"
+
+supported_targets = "js"

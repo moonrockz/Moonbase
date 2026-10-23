@@ -1,0 +1,8 @@
+import {
+  "moonrockz/okf",
+  "moonrockz/okf/edit",
+  "moonrockz/okf/openspec",
+  "moonrockz/expect",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/shrink",
+} for "wbtest"

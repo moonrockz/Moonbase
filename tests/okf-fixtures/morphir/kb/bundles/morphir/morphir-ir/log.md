@@ -1,0 +1,59 @@
+# Log
+
+## 2026-09-24
+
+* **Creation**: Added [IR 3.1.0 adds a Specs distribution and v3 document trees](/decisions/0018-ir-3-1-adds-specs-and-v3-document-trees.md). IR `3.1.0` adds a v3 `Specs` distribution and v3 JSON and YAML document trees, writers emit the lowest version that fits, and the reference support table becomes `[3.0.0,3.2.0),[4.0.0,4.1.0)`.
+* **Update**: [Format-version support and revisions](/format-version-support.md) and [IR v4 stabilization](/ir-v4-stabilization.md) carry the new reference table. morphir-rust declares it; morphir-ui keeps `[3.0.0,3.1.0),[4.0.0,4.1.0)` until it adopts `3.1.0`.
+* **Update**: [Amazon Ion IR format](/ion-ir-format.md) describes the unreleased v3 `specs` datagram and its refusals, and says that a distribution's own modules do not merge.
+* **Update**: [Amazon Ion IR format](/ion-ir-format.md) records that CLI prerelease `0.4.0-beta.6` ships the first draft codec, and that finos/morphir-rust#248 completes the codec for v3 dependencies and every v4 node except attributes, Morphir annotations and document literals.
+
+## 2026-09-23
+
+* **Creation**: Added [Amazon Ion IR format](/ion-ir-format.md).
+
+## 2026-09-16
+
+* **Creation**: Added [Support tables are intervals, and a patch changes nothing a reader can observe](/decisions/0016-support-tables-are-intervals-and-a-patch-changes-nothing-observable.md), closing bead morphir-ir-v4-stabilize.8.
+* **Creation**: Added the [Format-version support and revisions](/format-version-support.md) Design Note.
+* **Update**: Recorded [decision 0017](/decisions/0017-package-release-versions-belong-to-distribution-bindings.md). Packaging and distribution bindings supply release versions without requiring versions in core definitions or FQNames. Decision 0015's historical text and current bare `@` layout remain unchanged; graph-aware encoding stays in Stage 3.
+
+## 2026-09-15
+
+* **Creation**: Added [Dependency directories nest the package path and mark the version segment with @](/decisions/0015-dependency-directories-are-nested-with-a-version-segment.md).
+
+## 2026-09-05
+
+* **Update**: Implemented decisions 0004 to 0014 (finos/morphir#802, finos/morphir-typescript#3): kit cases flipped and extended to 74, reference codec, both schemas, examples, specification and design pages, and the naming corpus's truncation cases. The remaining open decisions are the 4.1.0 support policy and the naming codec's home (decision 0003).
+
+## 2026-09-04
+
+* **Creation**: Added [decision 0004](/decisions/0004-record-fields-are-spelled-under-a-fields-member.md) and [decision 0005](/decisions/0005-attributes-are-an-optional-first-member-of-every-node-payload.md), the first two spelling decisions closed through the Morphir Compatibility Kit; both were surfaced by the reference codec's first run against the kit.
+* **Creation**: Added [decision 0006](/decisions/0006-node-member-names-follow-the-schema-with-a-one-release-window.md) and [decision 0007](/decisions/0007-parameters-are-declared-and-arguments-are-applied.md): the schema's member names are canonical with a one-release window for the Rust spellings, and a Function type has a parameterType while constructors have parameters.
+* **Creation**: Added [decision 0008](/decisions/0008-hole-is-an-expression-native-and-external-are-definition-bodies.md): Hole stays an expression, Native and External expressions are removed, and ExternalBody carries per-target bindings with an optional fallback body.
+* **Creation**: Added [decision 0009](/decisions/0009-bare-arrays-are-lists-and-bare-scalars-are-literals-at-value-position.md): at value position a bare array is a List, bare scalars are literals, and Tuple stays wrapped.
+* **Creation**: Added [decision 0010](/decisions/0010-documentation-is-a-flattened-doc-member.md): documentation is a flattened doc member, first beside the variant, and a document-tree node file carries it in one place.
+* **Creation**: Added [decision 0011](/decisions/0011-the-sdk-package-is-named-morphir-slash-sdk-uppercase.md): the SDK package is morphir/SDK; every morphir/sdk in published v4 material is rewritten.
+* **Creation**: Added [decision 0012](/decisions/0012-one-legacy-name-grammar-and-one-file-stem-definition.md): one legacy word grammar in both schemas, FileStem defined once with its truncation suffix, pathBudget kept required, fileNames added to the module manifest.
+* **Creation**: Added [decision 0013](/decisions/0013-document-literal-is-in-v4-with-a-raw-payload.md): DocumentLiteral joins v4.0.0 with a raw JSON payload, no pattern matching, and a small SDK.
+* **Creation**: Added [decision 0014](/decisions/0014-scope-of-v4-0-0-for-design-only-features.md): decorations, $ref and the session journal are out of 4.0.0, $meta is reserved, and the books fixture migrates to product-ID.
+* **Update**: The corpus at `spec/ir/mck/` replaces the schema as the tiebreak; the kb note now says so. Added the `morphir-typescript` and `morphir-gleam` submodules; the mck parser and check command live in the former.
+* **Update**: Renamed the hand-written conformance corpus to the Morphir Compatibility Kit (MCK): spec/ir/mck/, the @finos/morphir-mck package, and the mck command. The generated naming and format-version corpora keep their names.
+
+## 2026-09-03
+
+* **Creation**: Added [IR v4 stabilization](/ir-v4-stabilization.md), the narrative home for closing the v4 draft. It consolidates the divergence registers from the morphir-scala knowledge base, the open beads, GitHub issues #792 to #795, and a fresh read of the schemas and the Rust and morphir-ui codecs at commit `64dc34ed`. Two findings are new: the Rust v4 type decoder reads a bare array as a parameterized `Reference` (the rule closed bead `morphir-j442` rejected), and the Rust encoder's member names (`attrs`, `thenBranch`, `arg`, `result`) do not validate against the schema.
+* **Update**: The 2026-08-30 note that the schemas still carried the retired name encoding is out of date. Both v4 schemas now carry the uppercase-segment patterns and the escaped `FileStem` pattern.
+
+## 2026-08-30
+
+* **Update**: Implemented decisions 0001 and 0002 in `ecosystem/morphir-rust/crates/morphir-core/src/naming/`. `Name` now stores `Segment::Word` and `Segment::Initialism`, writes the style named by `CANONICAL_STYLE`, decodes both styles and the legacy array, and projects onto the document tree through `to_file_stem`.
+* **Creation**: Added the shared conformance corpus at `docs/spec/ir/fixtures/naming-conformance.json`, generated by `tools/gen-naming-corpus.ts` under Bun and vendored into morphir-rust the way `format-version-conformance.json` is.
+* **Update**: Applied decision 0001 to the specification page `docs/spec/draft/names.md`. The schemas under `website/static/schemas/` still carry the retired encoding.
+
+* **Update**: Accepted [decision 0001](/decisions/0001-name-canonicalization-and-initialism-encoding.md).
+* **Creation**: Added [decision 0002](/decisions/0002-both-name-encodings-behind-one-switch.md), carrying both canonical encodings behind a compile-time constant that gates only the encoder.
+* **Creation**: Added [decision 0003](/decisions/0003-the-naming-codec-is-modelled-in-morphir.md), proposing that the codec be expressed as a Morphir model driving a shared conformance corpus.
+
+## 2026-08-29
+
+* **Creation**: Opened the bundle with [decision 0001](/decisions/0001-name-canonicalization-and-initialism-encoding.md), which revisits the parenthesized acronym encoding drafted for IR v4.

@@ -1,0 +1,49 @@
+{
+  "root": "kb",
+  "bundles": [
+    {
+      "label": "morphir/morphir-cli",
+      "name": "morphir-cli",
+      "group": "morphir",
+      "okfVersion": "0.2",
+      "title": "Morphir CLI",
+      "description": "The Rust morphir command line: its commands, behavior and design, as shipped from finos/morphir.",
+      "concepts": 6,
+      "subIndexes": 0,
+      "hasLog": true
+    },
+    {
+      "label": "morphir/morphir-extensions",
+      "name": "morphir-extensions",
+      "group": "morphir",
+      "okfVersion": "0.2",
+      "title": "Morphir extensions",
+      "description": "Compile-time extensions to the Morphir CLI: frontend and process providers, their identities and selection.",
+      "concepts": 11,
+      "subIndexes": 0,
+      "hasLog": true
+    },
+    {
+      "label": "morphir/morphir-ir",
+      "name": "morphir-ir",
+      "group": "morphir",
+      "okfVersion": "0.2",
+      "title": "Morphir IR",
+      "description": "The Morphir IR: its data model, naming, canonical serialization and distribution formats.",
+      "concepts": 22,
+      "subIndexes": 1,
+      "hasLog": true
+    },
+    {
+      "label": "morphir/morphir-package-system",
+      "name": "morphir-package-system",
+      "group": "morphir",
+      "okfVersion": "0.2",
+      "title": "Morphir package system",
+      "description": "The proposed Morphir model package system defines artifact boundaries, release identity, dependency resolution, registry behavior, trust, and staged delivery.",
+      "concepts": 5,
+      "subIndexes": 0,
+      "hasLog": true
+    }
+  ]
+}

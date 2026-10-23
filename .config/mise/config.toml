@@ -24,6 +24,9 @@ zig = "0.17.0"
 # Spec-driven change proposals under openspec/; needs Node.js 20.19 or later
 "npm:@fission-ai/openspec" = "1.14.3"
 
+# Browser test runner for the OKF browser store (tests/okf-browser); `mise run test:browser`
+"npm:@playwright/test" = "1.64.1"
+
 # MoonBit toolchain, pinned. mise cannot resolve "latest" for an http: tool, and a pinned version
 # keeps CI and every machine on the same compiler. To move to a newer release, change the version
 # here and in each URL (with "+" written as "%2B"), taken from
@@ -117,6 +120,10 @@ run = "moonx scripts/dist.mbtx pack"
 [tasks."test:native-zig"]
 description = "Run the native tests with zig as the C compiler (the host wrapper of zig-cross)"
 run = "moonx moonrockz/zig-cross@0.1.2 exec host -- moonx scripts/test.mbtx native"
+
+[tasks."test:browser"]
+description = "Run the OKF browser store checks in headless Chromium with Playwright (args: --install)"
+run = "moonx scripts/browser.mbtx"
 
 [tasks."test:scripts"]
 description = "Run the tests of the task scripts (scripts/*.mbtx that have a scripts/features/*.feature)"
