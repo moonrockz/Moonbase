@@ -5,6 +5,7 @@ import {
 }
 
 import {
+  "moonrockz/okf",
   "moonrockz/okf/fs/node",
   "moonrockz/okf/conformance",
   "moonrockz/okf/provider",

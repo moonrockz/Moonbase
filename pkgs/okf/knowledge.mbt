@@ -90,7 +90,12 @@ pub fn discover(
   }
   accepted.sort_by((a, b) => lexical_compare(a.join("/"), b.join("/")))
   let bundles = accepted.map(root => {
-    let group = root[under.length():root.length() - 1].to_owned()
+    // A bundle at the discovery root, or one level below it, has no group.
+    let group = if root.length() <= under.length() + 1 {
+      []
+    } else {
+      root[under.length():root.length() - 1].to_owned()
+    }
     load_bundle(set, root~, group~, options~, profiles~)
   })
   let strays = []

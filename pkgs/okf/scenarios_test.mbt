@@ -242,3 +242,29 @@ impl @okf.Profile for TypeFromPath with fn derive_metadata(_, doc) {
     None
   }
 }
+
+///|
+test "a bundle at the discovery root has no group" {
+  let root = @okf.discover(
+    set_of([("index.md", "---\nokf_version: \"0.2\"\n---\n")]),
+  )
+  assert_eq(
+    root.bundles().map(b => (b.label(), b.group().length())).iter().collect(),
+    [(".", 0)],
+  )
+  let under = @okf.discover(
+    set_of([
+      ("kb/index.md", "---\nokf_version: \"0.2\"\n---\n"),
+      ("kb/a.md", "---\ntype: A\n---\n"),
+    ]),
+    under=["kb"],
+  )
+  assert_eq(
+    under
+    .bundles()
+    .map(b => (b.label(), b.concepts().length()))
+    .iter()
+    .collect(),
+    [("kb", 1)],
+  )
+}

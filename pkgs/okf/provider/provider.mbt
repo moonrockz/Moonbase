@@ -118,6 +118,7 @@ pub async fn apply(
     match change {
       Create(path~, text~) | Update(path~, after=text, ..) =>
         store.write_text(path, text)
+      CreateBinary(path~, bytes~) => store.write_bytes(path, bytes)
       Delete(path~) => store.delete(path)
     }
     count += 1

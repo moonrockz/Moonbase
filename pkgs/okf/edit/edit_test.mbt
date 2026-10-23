@@ -227,3 +227,26 @@ fn refusal(b : @okf.Bundle, path : String) -> @edit.PathRefused? {
     _ => None
   }
 }
+
+///|
+test "values with line breaks, null-like values and entry markers stay strings" {
+  assert_eq(@edit.yaml_scalar("a\nb"), "\"a\\nb\"")
+  assert_eq(@edit.yaml_scalar("tab\there"), "\"tab\\there\"")
+  assert_eq(@edit.yaml_scalar("null"), "\"null\"")
+  assert_eq(@edit.yaml_scalar("~"), "\"~\"")
+  assert_eq(@edit.yaml_scalar("- item"), "\"- item\"")
+  assert_eq(@edit.yaml_scalar("plain"), "plain")
+  for
+    value in [
+      "a\nb\r\nc", "null", "~", "- item", "? key", "line\tend", "quote \" and \\ slash",
+    ] {
+    let text = @edit.set_key("---\ntype: A\n---\n", "title", value).text
+    let doc = @okf.Document(
+      @okf.BundlePath("/a.md"),
+      @okf.StorePath("a.md"),
+      text,
+    )
+    assert_eq(doc.metadata().keys(), ["type", "title"], msg=value)
+    assert_eq(doc.metadata().text("title"), Some(value), msg=value)
+  }
+}

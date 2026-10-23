@@ -284,3 +284,33 @@ test "export merges native Requirement and Scenario concepts" {
     "# a Specification\n\n## Purpose\n\nA thing.\n\n## Requirements\n\n### Requirement: Works\nIt SHALL work.\n\n#### Scenario: Simple\n- **WHEN** used\n- **THEN** it works\n",
   )
 }
+
+///|
+test "import and export keep binary assets byte for byte" {
+  let png = b"\x89PNG\r\n\x1a\n\x00\xfe\xff"
+  let original = tree().with_entry({
+    path: @okf.StorePath("openspec/changes/fix-ids/diagram.png"),
+    content: Bytes(png),
+  })
+  let imported = @openspec.import_openspec(
+    original,
+    ["openspec"],
+    ["kb"],
+    "2026-10-23",
+  ).apply_to(@okf.DocumentSet([]))
+  assert_eq(
+    imported
+    .get(@okf.StorePath("kb/changes/fix-ids/diagram.png"))
+    .map(e => e.content),
+    Some(Bytes(png)),
+  )
+  let exported = @openspec.export_openspec(imported, ["kb"], ["openspec"]).apply_to(
+    @okf.DocumentSet([]),
+  )
+  assert_eq(
+    exported
+    .get(@okf.StorePath("openspec/changes/fix-ids/diagram.png"))
+    .map(e => e.content),
+    Some(Bytes(png)),
+  )
+}

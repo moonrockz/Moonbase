@@ -84,13 +84,15 @@ pub fn import_openspec(
   }
   for asset in bundle.assets() {
     match set.get(bundle.store_path_of(asset)) {
-      Some(entry) =>
+      Some(entry) => {
+        let path = store_path(target_root, asset.to_string()[1:].to_owned())
         changes.push(
-          @edit.FileChange::Create(
-            path=store_path(target_root, asset.to_string()[1:].to_owned()),
-            text=entry.content.text(),
-          ),
+          match entry.content {
+            Bytes(bytes) => @edit.FileChange::CreateBinary(path~, bytes~)
+            Text(text) => @edit.FileChange::Create(path~, text~)
+          },
         )
+      }
       None => ()
     }
   }
@@ -226,13 +228,15 @@ pub fn export_openspec(
   }
   for asset in bundle.assets() {
     match set.get(bundle.store_path_of(asset)) {
-      Some(entry) =>
+      Some(entry) => {
+        let path = store_path(target_root, asset.to_string()[1:].to_owned())
         changes.push(
-          @edit.FileChange::Create(
-            path=store_path(target_root, asset.to_string()[1:].to_owned()),
-            text=entry.content.text(),
-          ),
+          match entry.content {
+            Bytes(bytes) => @edit.FileChange::CreateBinary(path~, bytes~)
+            Text(text) => @edit.FileChange::Create(path~, text~)
+          },
         )
+      }
       None => ()
     }
   }

@@ -22,17 +22,32 @@ pub(all) suberror EditError {
 } derive(Eq, Debug)
 
 ///|
-/// Quotes a value for a YAML frontmatter line when it contains characters that
-/// would change its meaning unquoted, has leading or trailing spaces, or is empty.
+/// Quotes a value for a YAML frontmatter line when it would change its meaning
+/// unquoted: it contains special characters or line breaks, starts like a
+/// sequence or mapping entry, has leading or trailing spaces, is empty, or
+/// reads as null. Line breaks and tabs are escaped, so the value is kept exactly.
 pub fn yaml_scalar(value : String) -> String {
   let special = ":#{}[]&*!|>'\"%@`,"
+  let null_like = ["null", "Null", "NULL", "~"]
   let needs = value.length() == 0 ||
     value.has_prefix(" ") ||
     value.has_suffix(" ") ||
-    value.iter().any(c => special.contains_char(c))
+    value == "-" ||
+    value == "?" ||
+    value.has_prefix("- ") ||
+    value.has_prefix("? ") ||
+    null_like.contains(value) ||
+    value
+    .iter()
+    .any(c => special.contains_char(c) || c == '\n' || c == '\r' || c == '\t')
   if needs {
     "\"" +
-    value.replace_all(old="\\", new="\\\\").replace_all(old="\"", new="\\\"") +
+    value
+    .replace_all(old="\\", new="\\\\")
+    .replace_all(old="\"", new="\\\"")
+    .replace_all(old="\n", new="\\n")
+    .replace_all(old="\r", new="\\r")
+    .replace_all(old="\t", new="\\t") +
     "\""
   } else {
     value

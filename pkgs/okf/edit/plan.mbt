@@ -2,6 +2,8 @@
 /// One change of an edit plan.
 pub(all) enum FileChange {
   Create(path~ : @okf.StorePath, text~ : String)
+  /// A new binary file, such as an image asset.
+  CreateBinary(path~ : @okf.StorePath, bytes~ : Bytes)
   Update(path~ : @okf.StorePath, before~ : String, after~ : String)
   Delete(path~ : @okf.StorePath)
 } derive(Eq, Debug)
@@ -9,7 +11,10 @@ pub(all) enum FileChange {
 ///|
 pub fn FileChange::path(self : FileChange) -> @okf.StorePath {
   match self {
-    Create(path~, ..) | Update(path~, ..) | Delete(path~) => path
+    Create(path~, ..)
+    | CreateBinary(path~, ..)
+    | Update(path~, ..)
+    | Delete(path~) => path
   }
 }
 
@@ -91,6 +96,8 @@ pub fn EditPlan::render(self : EditPlan) -> String {
           }
         }
       }
+      CreateBinary(path~, bytes~) =>
+        out.write_string("create \{path} (binary, \{bytes.length()} bytes)\n")
       Delete(path~) => out.write_string("delete \{path}\n")
     }
   }
@@ -108,6 +115,8 @@ pub fn EditPlan::apply_to(
     current = match change {
       Create(path~, text~) | Update(path~, after=text, ..) =>
         current.with_entry({ path, content: Text(text), })
+      CreateBinary(path~, bytes~) =>
+        current.with_entry({ path, content: Bytes(bytes), })
       Delete(path~) => current.without(path)
     }
   }

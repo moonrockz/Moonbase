@@ -36,44 +36,85 @@ pub extern "js" fn node_available() -> Bool =
 
 ///|
 extern "js" fn node_call(
+  root : String,
   op : String,
   path : String,
   text : String,
   bytes : Bytes,
 ) -> @js_async.Promise[NodeResult] =
-  #| (op, path, text, bytes) => (async () => {
+  #| (root, op, path, text, bytes) => (async () => {
   #|   try {
   #|     const fs = globalThis.process.getBuiltinModule("node:fs/promises");
   #|     const p = globalThis.process.getBuiltinModule("node:path");
+  #|     if (op === "mkdtemp") {
+  #|       const os = globalThis.process.getBuiltinModule("node:os");
+  #|       return { ok: true, value: await fs.mkdtemp(p.join(os.tmpdir(), path)) };
+  #|     }
+  #|     if (op === "rmdir") {
+  #|       await fs.rm(path, { recursive: true, force: true });
+  #|       return { ok: true, value: null };
+  #|     }
+  #|     // Every path must resolve inside the store root, following symlinks.
+  #|     const rootReal = await fs.realpath(root);
+  #|     const inside = (r) => r === rootReal || r.startsWith(rootReal + p.sep);
+  #|     const outside = (target) => {
+  #|       const e = new Error("the path leaves the store root: " + target);
+  #|       e.code = "EACCES";
+  #|       return e;
+  #|     };
+  #|     const confine = async (target) => {
+  #|       let cur = target;
+  #|       for (;;) {
+  #|         let real;
+  #|         try {
+  #|           real = await fs.realpath(cur);
+  #|         } catch (e) {
+  #|           if (e && e.code === "ENOENT") {
+  #|             const parent = p.dirname(cur);
+  #|             if (parent === cur) return;
+  #|             cur = parent;
+  #|             continue;
+  #|           }
+  #|           throw e;
+  #|         }
+  #|         if (!inside(real)) throw outside(target);
+  #|         return;
+  #|       }
+  #|     };
   #|     switch (op) {
   #|       case "list": {
+  #|         await confine(path);
   #|         const entries = await fs.readdir(path, { withFileTypes: true });
   #|         const out = [];
   #|         for (const e of entries) {
-  #|           if (e.isDirectory()) out.push("d\t" + e.name);
-  #|           else if (e.isFile() || e.isSymbolicLink()) out.push("f\t" + e.name);
+  #|           const child = p.join(path, e.name);
+  #|           if (e.isSymbolicLink()) {
+  #|             let real;
+  #|             try { real = await fs.realpath(child); } catch (_) { continue; }
+  #|             if (!inside(real)) continue;
+  #|             const st = await fs.stat(child);
+  #|             out.push((st.isDirectory() ? "d\t" : "f\t") + e.name);
+  #|           } else if (e.isDirectory()) out.push("d\t" + e.name);
+  #|           else if (e.isFile()) out.push("f\t" + e.name);
   #|         }
   #|         return { ok: true, value: out.join("\u0000") };
   #|       }
-  #|       case "readText": return { ok: true, value: await fs.readFile(path, "utf8") };
-  #|       case "readBytes": return { ok: true, value: await fs.readFile(path) };
+  #|       case "readText": await confine(path); return { ok: true, value: await fs.readFile(path, "utf8") };
+  #|       case "readBytes": await confine(path); return { ok: true, value: await fs.readFile(path) };
   #|       case "writeText":
-  #|         await fs.mkdir(p.dirname(path), { recursive: true });
-  #|         await fs.writeFile(path, text, "utf8");
-  #|         return { ok: true, value: null };
   #|       case "writeBytes":
+  #|         await confine(p.dirname(path));
   #|         await fs.mkdir(p.dirname(path), { recursive: true });
-  #|         await fs.writeFile(path, bytes);
+  #|         await confine(path);
+  #|         if (op === "writeText") await fs.writeFile(path, text, "utf8");
+  #|         else await fs.writeFile(path, bytes);
   #|         return { ok: true, value: null };
   #|       case "delete":
+  #|         // Deleting a symlink removes the link, so only its directory must be inside.
+  #|         await confine(p.dirname(path));
   #|         try { await fs.unlink(path); } catch (e) { if (e.code !== "ENOENT") throw e; }
   #|         return { ok: true, value: null };
-  #|       case "mtime": return { ok: true, value: (await fs.stat(path)).mtimeMs };
-  #|       case "mkdtemp": {
-  #|         const os = globalThis.process.getBuiltinModule("node:os");
-  #|         return { ok: true, value: await fs.mkdtemp(p.join(os.tmpdir(), path)) };
-  #|       }
-  #|       case "rmdir": await fs.rm(path, { recursive: true, force: true }); return { ok: true, value: null };
+  #|       case "mtime": await confine(path); return { ok: true, value: (await fs.stat(path)).mtimeMs };
   #|     }
   #|     return { ok: false, code: "EINVAL", message: "unknown operation " + op };
   #|   } catch (e) {
@@ -85,6 +126,7 @@ extern "js" fn node_call(
 async fn call(
   op : String,
   path : String,
+  root~ : String = "",
   text~ : String = "",
   bytes~ : Bytes = b"",
 ) -> NodeResult raise @provider.StoreError {
@@ -93,7 +135,7 @@ async fn call(
       path, "the Node.js file system API is not available; it needs Node.js 20.16 or later",
     )
   }
-  let result = node_call(op, path, text, bytes).wait() catch {
+  let result = node_call(root, op, path, text, bytes).wait() catch {
     e => raise Failed(path, e.to_string())
   }
   if result.ok() {
@@ -157,7 +199,7 @@ fn NodeStore::file(self : NodeStore, path : @okf.StorePath) -> String {
 
 ///|
 pub impl @provider.DocumentStore for NodeStore with fn list(self, dir) {
-  let encoded = call("list", self.full(dir)).text()
+  let encoded = call("list", self.full(dir), root=self.root).text()
   let out = []
   if encoded.length() > 0 {
     for item in encoded.split("\u0000") {
@@ -176,12 +218,12 @@ pub impl @provider.DocumentStore for NodeStore with fn list(self, dir) {
 
 ///|
 pub impl @provider.DocumentStore for NodeStore with fn read_text(self, path) {
-  call("readText", self.file(path)).text()
+  call("readText", self.file(path), root=self.root).text()
 }
 
 ///|
 pub impl @provider.DocumentStore for NodeStore with fn read_bytes(self, path) {
-  call("readBytes", self.file(path)).bytes()
+  call("readBytes", self.file(path), root=self.root).bytes()
 }
 
 ///|
@@ -190,7 +232,7 @@ pub impl @provider.DocumentStore for NodeStore with fn write_text(
   path,
   text,
 ) {
-  call("writeText", self.file(path), text~) |> ignore
+  call("writeText", self.file(path), text~, root=self.root) |> ignore
 }
 
 ///|
@@ -199,17 +241,17 @@ pub impl @provider.DocumentStore for NodeStore with fn write_bytes(
   path,
   bytes,
 ) {
-  call("writeBytes", self.file(path), bytes~) |> ignore
+  call("writeBytes", self.file(path), bytes~, root=self.root) |> ignore
 }
 
 ///|
 pub impl @provider.DocumentStore for NodeStore with fn delete(self, path) {
-  call("delete", self.file(path)) |> ignore
+  call("delete", self.file(path), root=self.root) |> ignore
 }
 
 ///|
 pub impl @provider.DocumentStore for NodeStore with fn modified(self, path) {
-  let ms = call("mtime", self.file(path)).number()
+  let ms = call("mtime", self.file(path), root=self.root).number()
   Some(@okf.Instant::of_millis(ms.to_int64()))
 }
 
