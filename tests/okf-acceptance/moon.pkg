@@ -1,0 +1,11 @@
+import {
+  "moonbitlang/async",
+  "moonbitlang/x/fs",
+  "moonrockz/okf",
+  "moonrockz/moonspec",
+  "moonrockz/expect",
+  "moonbitlang/core/json",
+  "moonbitlang/core/debug",
+} for "wbtest"
+
+supported_targets = "js+native"

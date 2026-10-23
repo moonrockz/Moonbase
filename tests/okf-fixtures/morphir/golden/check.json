@@ -1,0 +1,271 @@
+{
+  "errors": 32,
+  "warnings": 1,
+  "infos": 0,
+  "findings": [
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-cli/kb-tooling.md",
+      "line": 34,
+      "message": "link target does not exist: ../../../../spec/conceptual/intent/guide.html",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-ir/decisions/0017-package-release-versions-belong-to-distribution-bindings.md",
+      "line": 48,
+      "message": "link target does not exist: ../../../../../spec/package/resolution-contract.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-ir/decisions/0019-native-metadata-uses-a-scoped-property-graph.md",
+      "line": 53,
+      "message": "link target does not exist: ../../../../../spec/ir/mck/metadata-contract-draft.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/decisions/0001-package-compatibility-uses-the-shared-mck-core.md",
+      "line": 37,
+      "message": "link target does not exist: ../../../../../spec/ir/mck/README.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/decisions/0002-portable-restore-with-explicit-filesystem-assurance.md",
+      "line": 46,
+      "message": "link target does not exist: ../../../../../spec/package/local-library-contract.md#safe-staging-and-materialization",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/decisions/0002-portable-restore-with-explicit-filesystem-assurance.md",
+      "line": 53,
+      "message": "link target does not exist: ../../../../../spec/package/restore-filesystem-assurance.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/decisions/0003-mck-tooling-lives-in-the-rust-morphir-cli.md",
+      "line": 31,
+      "message": "link target does not exist: ../../../../../spec/mck/migration.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/decisions/0003-mck-tooling-lives-in-the-rust-morphir-cli.md",
+      "line": 114,
+      "message": "link target does not exist: ../../../../../spec/mck/cli-contract.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/decisions/0003-mck-tooling-lives-in-the-rust-morphir-cli.md",
+      "line": 115,
+      "message": "link target does not exist: ../../../../../spec/mck/kit-manifest.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/decisions/0003-mck-tooling-lives-in-the-rust-morphir-cli.md",
+      "line": 127,
+      "message": "link target does not exist: ../../../../../spec/mck/baseline/README.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/log.md",
+      "line": 9,
+      "message": "link target does not exist: ../../../../spec/package/restore-filesystem-assurance.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/log.md",
+      "line": 19,
+      "message": "link target does not exist: ../../../../spec/package/mck/fixtures/local-registry/assets/signed/README.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/log.md",
+      "line": 25,
+      "message": "link target does not exist: ../../../../spec/package/mck/README.md#candidate-local-registry-contract",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/log.md",
+      "line": 29,
+      "message": "link target does not exist: ../../../../spec/package/local-library-contract.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/log.md",
+      "line": 29,
+      "message": "link target does not exist: ../../../../spec/package/package-trust-profile.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/log.md",
+      "line": 35,
+      "message": "link target does not exist: ../../../../spec/package/mck/README.md#landed-resolution-evidence",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/log.md",
+      "line": 39,
+      "message": "link target does not exist: ../../../../spec/package/mck/README.md#landed-resolution-evidence",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/log.md",
+      "line": 41,
+      "message": "link target does not exist: ../../../../spec/package/mck/README.md#landed-resolution-evidence",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 569,
+      "message": "link target does not exist: ../../../../spec/package/resolution-contract.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 594,
+      "message": "link target does not exist: ../../../../spec/package/mck/fixtures/resolution/updates.json",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 632,
+      "message": "link target does not exist: ../../../../spec/package/mck/README.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 637,
+      "message": "link target does not exist: ../../../../spec/package/mck/README.md#landed-resolution-evidence",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 815,
+      "message": "link target does not exist: ../../../../spec/package/library-contract.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 909,
+      "message": "link target does not exist: ../../../../spec/package/package-trust-profile.md#consumer-key-management-requirement",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 940,
+      "message": "link target does not exist: ../../../../docs/spec/tool-release-metadata/index.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 965,
+      "message": "link target does not exist: ../../../../spec/package/local-library-contract.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 967,
+      "message": "link target does not exist: ../../../../spec/package/package-trust-profile.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 975,
+      "message": "link target does not exist: ../../../../spec/package/mck/README.md#candidate-local-registry-contract",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 980,
+      "message": "link target does not exist: ../../../../spec/package/mck/fixtures/local-registry/assets/signed/README.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 1003,
+      "message": "link target does not exist: ../../../../spec/package/restore-filesystem-assurance.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 1279,
+      "message": "link target does not exist: ../../../../spec/package/README.md",
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "check": "link-broken",
+      "path": "kb/bundles/morphir/morphir-package-system/package-system-design.md",
+      "line": 1300,
+      "message": "link target does not exist: ../../../../spec/package/mck/README.md#landed-resolution-evidence",
+      "hint": null
+    },
+    {
+      "severity": "warn",
+      "check": "index-description-drift",
+      "path": "kb/bundles/morphir/morphir-ir/decisions/index.md",
+      "line": 22,
+      "message": "index entry text differs from the concept's description (/decisions/0019-native-metadata-uses-a-scoped-property-graph.md)",
+      "hint": "concept says: Native V4 metadata uses compact facts on Type and Value nodes, specification annotations, and document-level $meta graph statements; contexts expand names and assertion identity retains carrier ownership."
+    }
+  ]
+}

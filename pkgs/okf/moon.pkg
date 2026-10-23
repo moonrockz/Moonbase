@@ -1,0 +1,13 @@
+import {
+  "moonrockz/mdc",
+  "moonbit-community/cmark/cmark",
+  "moonbit-community/cmark/cmark_base",
+  "moonbit-community/yaml",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/math",
+}
+
+import {
+  "moonrockz/okf",
+  "moonbitlang/core/debug",
+} for "test"

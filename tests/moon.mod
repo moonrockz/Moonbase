@@ -7,6 +7,8 @@ import {
   "moonbitlang/async@0.22.5",
   "moonrockz/mdc@0.0.2",
   "moonrockz/ears@0.0.2",
+  "moonrockz/okf@0.0.2",
+  "moonbitlang/x@0.5.5",
   "moonrockz/moonspec@0.11.0",
   "moonrockz/expect@0.6.1",
 }
