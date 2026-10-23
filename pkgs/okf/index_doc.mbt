@@ -139,6 +139,15 @@ pub fn parse_index_entry(
 ///|
 /// The body lines of a document with their file line numbers, without the
 /// lines inside fenced code blocks.
+
+///|
+/// The body lines of a document with their file line numbers, without the
+/// lines inside fenced code blocks.
+pub fn Document::prose_lines(self : Document) -> Array[(Int32, String)] {
+  body_lines(self)
+}
+
+///|
 fn body_lines(doc : Document) -> Array[(Int32, String)] {
   let out = []
   let mut fence : String? = None

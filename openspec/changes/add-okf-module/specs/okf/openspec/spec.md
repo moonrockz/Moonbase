@@ -7,7 +7,7 @@ Connect OpenSpec and OKF: read an OpenSpec tree as an OKF bundle, hold OpenSpec 
 ## ADDED Requirements
 
 ### Requirement: OpenSpec tree as a bundle
-The library SHALL ship an OpenSpec profile that loads an `openspec/` tree as an OKF bundle. It SHALL classify `specs/<capability>/spec.md` as a Specification, and each change directory as a Change with its Proposal, Design, Tasks and spec deltas.
+The library SHALL ship an OpenSpec profile that loads an `openspec/` tree as an OKF bundle. It SHALL classify `specs/<capability>/spec.md` as a Specification, the `proposal.md` of each change as its Change, and the change's `design.md`, `tasks.md` and spec deltas as Design, Tasks and Spec Delta.
 
 #### Scenario: Specification
 - **WHEN** the tree has `openspec/specs/okf/documents/spec.md`
@@ -15,11 +15,11 @@ The library SHALL ship an OpenSpec profile that loads an `openspec/` tree as an 
 
 #### Scenario: Change
 - **WHEN** the tree has `openspec/changes/add-okf-module/` with `proposal.md`, `design.md`, `tasks.md` and spec deltas
-- **THEN** the bundle has a Change concept `add-okf-module` that links to its Proposal, Design, Tasks and deltas
+- **THEN** the bundle has a Change concept `add-okf-module` (its `proposal.md`) that links to its Design, Tasks and deltas
 
 #### Scenario: Archived change
 - **WHEN** the tree has a change under `openspec/changes/archive/`
-- **THEN** the Change concept has the status `archived`
+- **THEN** the Change concept has the `state` value `archived`
 
 ### Requirement: Structured OpenSpec content
 The OpenSpec profile SHALL give each requirement with its name, its text and its scenarios, each scenario with its WHEN and THEN clauses, each delta with its operation (added, modified, removed or renamed), and each task with its number, text and done flag.

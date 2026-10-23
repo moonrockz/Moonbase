@@ -239,10 +239,21 @@ pub fn validate(
       sets.push(set)
     }
   }
+  let profile_severity : Map[String, Severity] = Map([])
+  for profile in profiles {
+    for pair in profile.severities() {
+      if !profile_severity.contains(pair.0) {
+        profile_severity[pair.0] = pair.1
+      }
+    }
+  }
   for set in sets {
     for rule in set.rules {
       guard !config.disabled.contains(rule.name) else { continue }
-      let severity = config.overrides.get(rule.name).unwrap_or(rule.severity)
+      let severity = match config.overrides.get(rule.name) {
+        Some(s) => s
+        None => profile_severity.get(rule.name).unwrap_or(rule.severity)
+      }
       for issue in (rule.check)(context) {
         findings.push({
           severity,
