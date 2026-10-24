@@ -78,10 +78,10 @@ fn check_value(key : String, value : String) -> Unit raise EditError {
 }
 
 ///|
-/// Checks that a date is a real calendar date in the form `YYYY-MM-DD`.
-pub fn check_date(date : String) -> Unit raise EditError {
-  guard date.length() == 10 &&
-    @okf.Instant::parse(date, date_only=true) is Some(_) else {
+/// Checks that a date is a real calendar date in the form `YYYY-MM-DD`, with
+/// the one shared rule `@okf.Instant::parse_date`.
+fn check_date(date : String) -> Unit raise EditError {
+  guard @okf.Instant::parse_date(date) is Some(_) else {
     raise InvalidDate(date)
   }
 }

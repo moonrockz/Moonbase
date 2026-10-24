@@ -46,8 +46,7 @@ pub fn import_openspec(
   target_root : ArrayView[String],
   date : String,
 ) -> @edit.EditPlan raise {
-  guard date.length() == 10 &&
-    @okf.Instant::parse(date, date_only=true) is Some(_) else {
+  guard @okf.Instant::parse_date(date) is Some(_) else {
     raise InvalidDate(date)
   }
   let profile : &@okf.Profile = OpenSpecProfile::{ }
