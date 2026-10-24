@@ -76,3 +76,10 @@ The library SHALL find the regions of a document that a marker comment starts, s
 #### Scenario: Marker region
 - **WHEN** an index has a preamble, then `<!-- intent:index -->`, then generated entries
 - **THEN** the region for `intent:index` contains only the generated entries
+
+### Requirement: Dated log headings
+The library SHALL treat a log section heading as dated only when it is a real calendar date in the form `YYYY-MM-DD`. A heading such as `2026-13-45` SHALL be undated.
+
+#### Scenario: Impossible date
+- **WHEN** a log has the headings `2026-13-45`, `2026-02-30` and `2026-10-23`
+- **THEN** the undated sections are `2026-13-45` and `2026-02-30`
