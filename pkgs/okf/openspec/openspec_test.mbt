@@ -314,3 +314,62 @@ test "import and export keep binary assets byte for byte" {
     Some(Bytes(png)),
   )
 }
+
+///|
+test "export refuses capability and change names that leave the target" {
+  for
+    bad in [
+      ("capability", "../../evil"),
+      ("capability", "a//b"),
+      ("change", "../x"),
+      ("change", "a/b"),
+    ] {
+    let (key, value) = bad
+    let concept = if key == "capability" {
+      "---\ntype: Specification\ncapability: \{value}\n---\n# x\n"
+    } else {
+      "---\ntype: Change\nchange: \{value}\n---\n## Why\n"
+    }
+    let set = @okf.DocumentSet::of_texts([
+      ("kb/index.md", "---\nokf_version: \"0.2\"\n---\n"),
+      ("kb/x.md", concept),
+    ])
+    let refused = try @openspec.export_openspec(set, ["kb"], ["out"]) catch {
+      @openspec.InvalidName(key=k, value=v) => k == key && v == value
+      _ => false
+    } noraise {
+      _ => false
+    }
+    assert_true(refused, msg=value)
+  }
+}
+
+///|
+test "import refuses a date that is not a calendar date" {
+  let refused = try
+    @openspec.import_openspec(tree(), ["openspec"], ["kb"], "2026-13-01")
+  catch {
+    @openspec.InvalidDate(d) => d == "2026-13-01"
+    _ => false
+  } noraise {
+    _ => false
+  }
+  assert_true(refused)
+}
+
+///|
+test "export refuses names that a Windows file system cannot hold" {
+  for value in ["x.", "x ", "CON", "com1.txt", "nul"] {
+    let set = @okf.DocumentSet::of_texts([
+      ("kb/index.md", "---\nokf_version: \"0.2\"\n---\n"),
+      ("kb/x.md", "---\ntype: Change\nchange: \"\{value}\"\n---\n## Why\n"),
+    ])
+    let refused = try @openspec.export_openspec(set, ["kb"], ["out"]) catch {
+      @openspec.InvalidName(..) => true
+      _ => false
+    } noraise {
+      _ => false
+    }
+    assert_true(refused, msg=value)
+  }
+}

@@ -32,7 +32,7 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 ## Development style
 
 - Prioritize functional programming. Use a functional core for domain rules and transformations, with an imperative shell for I/O, external services and orchestration. Pass dependencies and inputs explicitly; return values and decisions from the core for the shell to act on.
-- Model the domain with meaningful types. Avoid primitive obsession: use distinct types for values with different meanings or constraints, rather than interchangeable strings, integers and booleans.
+- Model the domain with meaningful types, as the Domain types section below requires.
 - Prefer immutable domain values and public contracts. Hide representations and use smart constructors to establish invariants. Validate external data at boundaries, then pass validated values through the core.
 - Use MoonBit's custom constructor functions for APIs we own: `fn Foo::Foo(...) -> Foo`, or `fn Fallible::Fallible(...) -> Fallible raise MyErrorType` for fallible construction. Prefer these over `::new`; call them as `Foo(...)` or `Foo::Foo(...)` when qualification is needed. Keep smart constructor validation and representation hiding in place. Use dependency APIs as provided.
 - Protect immutability through the whole value graph. Do not expose mutable maps, arrays or other aliases that let callers invalidate a domain value. Use immutable views or defensive copies where needed.
@@ -41,12 +41,55 @@ Write task and automation scripts in MoonBit, as standalone `.mbtx` scripts, not
 - Use typestate when operations depend on lifecycle or validation state. Give states distinct types and expose valid transitions through their APIs, so the compiler enforces operation order. Avoid boolean flag combinations and repeated runtime guards for facts already established by a type. Keep runtime checks for conditions that types cannot guarantee.
 - Imperative algorithms and local mutation are allowed inside implementations for performance. Keep that mutation encapsulated, prevent mutable aliases from escaping, and preserve the observable behavior and invariants of the functional API.
 
+## Domain types
+
+Do not use primitive obsession. Parse, do not validate. Make invalid states
+unrepresentable. These rules come before convenience, and the `code-reviewer`
+agents check them first.
+
+- When a value has rules, make a type for it. Do not use a raw `String`, `Int`,
+  `Array` or `Map` for it. Examples: names, labels, keys, paths, identifiers, limits,
+  levels, durations and exit codes.
+- Give each type a smart constructor in this repository's constructor style, for
+  example `fn AppName::AppName(text : String) -> AppName raise NameError`. Keep the
+  fields private, so the constructor is the only way to make a value. Do not use a
+  `pub(all)` struct or a public tuple struct for a value that has rules.
+- Parse one time, at the boundary where the raw value enters. After the parse, pass
+  the type, not the raw value. Do not check the same rules again later.
+- Use an enum for a fixed set of cases, not a string or an integer code.
+- When a value is valid by construction, give a constructor that cannot fail, for
+  example a constant (`ExitCode::success()`) or a value derived from another valid
+  value.
+- A parse failure is a typed `suberror` that names the input and the rule it breaks.
+- Test each rule of a smart constructor with values on each side of the limit.
+- Free text that has no rules, such as a title, a description or a message, can stay
+  a `String`. Say so in the doc comment when the choice is not obvious.
+
 ## Testing style
 
 - Write acceptance tests with `moonrockz/moonspec`, using Gherkin features and step definitions under `tests/<area>-acceptance/`. Exercise public APIs and describe observable behavior. Keep scenario state local to each World.
 - Use `moonrockz/expect` for assertions. Group related independent assertions with `expect_all` and use the supplied scope's `s.expect` so one failure does not hide the others. Keep prerequisite checks outside the soft assertion group when later checks require their values.
 - Establish domain and traversal laws with property-based tests under `tests/<area>-laws/`, using Expect's `for_all` and MoonBit QuickCheck. Generate valid domain inputs by construction, supply shrinkers that preserve validity, and set explicit seeds, case counts and size limits so failures are reproducible.
 - Keep focused unit and implementation regression tests beside the package. Acceptance tests and laws belong to the unpublished `tests` workspace module. Declare target restrictions per package in `moon.pkg`; the test task discovers packages recursively.
+
+## Review guidelines
+
+Review each change against this file. The full checklist is the skill
+`.agents/skills/code-review/SKILL.md`. It is the one source for every agent tool:
+the `code-reviewer` agents in `.claude/agents/`, `.cursor/agents/`, `.codex/agents/`
+and `.github/agents/` only point to it. A tool without one of these formats, such as
+Grok Build or Muse, reads the skill file directly. Change the checklist only in the
+skill. Report these as problems:
+
+- A raw primitive for a domain value that has rules, a check that repeats rules after
+  a parse, or a public way to make a value that breaks its rules (Domain types).
+- I/O outside the boundary code (task scripts, apps, the OKF store packages and
+  tests), or mutable public state.
+- Behavior, a public API or a requirement that changes without an OpenSpec change,
+  or code that disagrees with the spec, the design or the ticked tasks.
+- Library code that does not build and test on `wasm`, `wasm-gc`, `js` and `native`
+  without a comment in `moon.pkg` that gives the reason for its target limit, or a
+  `warnings` override without a comment that gives the reason and when to remove it.
 
 ## Working documents
 

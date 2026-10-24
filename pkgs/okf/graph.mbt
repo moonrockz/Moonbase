@@ -176,10 +176,7 @@ pub fn Graph::orphans(
       .backlinks(key)
       .any(edge => {
         edge.from != key &&
-        (
-          count_index_links ||
-          !edge.from.path.name().to_lower().has_suffix("index.md")
-        )
+        (count_index_links || !kind_of(edge.from.path).is_index())
       })
     if !linked {
       out.push(key)

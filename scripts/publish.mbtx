@@ -58,6 +58,33 @@ fn classify(exit_code : Int32, output : String) -> Outcome {
 }
 
 ///|
+/// True when `word` occurs in `text` as whole words: the characters around it
+/// are not letters or digits. So `401` matches `HTTP 401` but not `4013ab`,
+/// and `eof` matches `unexpected EOF` but not `thereof`.
+fn has_word(text : String, word : String) -> Bool {
+  let is_word_char = (c : UInt16) => (c >= 48 && c <= 57) ||
+    (c >= 65 && c <= 90) ||
+    (c >= 97 && c <= 122)
+  let n = word.length()
+  let mut from = 0
+  while from + n <= text.length() {
+    match text[from:].find(word) {
+      None => return false
+      Some(i) => {
+        let at = from + i
+        let before_ok = at == 0 || !is_word_char(text.code_unit_at(at - 1))
+        let after_ok = at + n == text.length() || !is_word_char(text.code_unit_at(at + n))
+        if before_ok && after_ok {
+          return true
+        }
+        from = at + 1
+      }
+    }
+  }
+  false
+}
+
+///|
 /// A failed network command is worth a retry only when the failure is probably temporary. A refusal
 /// (401, 403) or a conflict (409) is not, and it wins over the transient words.
 fn is_transient(exit_code : Int32, output : String) -> Bool {
@@ -66,14 +93,15 @@ fn is_transient(exit_code : Int32, output : String) -> Bool {
   }
   let text = output.to_lower()
   for word in ["401", "403", "409"] {
-    if text.contains(word) {
+    if has_word(text, word) {
       return false
     }
   }
-  [
-    "timed out", "timeout", "connection reset", "connection refused", "temporary failure",
-    "eof", "502", "503", "504", "rate limit", "prebuilt wasm asset does not exist",
-  ].any(word => text.contains(word))
+  // Status codes and `eof` match as whole words, so `15020` and `thereof` do
+  // not count. Phrases match anywhere, so `TimeoutError` and Rust's
+  // `UnexpectedEof` still count.
+  ["eof", "502", "503", "504"].any(word => has_word(text, word)) ||
+  ["timed out", "timeout", "connection reset", "connection refused", "temporary failure", "rate limit", "prebuilt wasm asset does not exist", "unexpectedeof"].any(word => text.contains(word))
 }
 
 ///|

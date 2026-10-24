@@ -32,6 +32,12 @@ Feature: Publish to mooncakes.io
       | 1    | HTTP 409 timeout             | no        |
       | 255  | Prebuilt wasm asset does not exist | yes |
       | 1    | Check failed                 | no        |
+      | 1    | HTTP 503 for asset 4013abc       | yes       |
+      | 1    | see the notes thereof            | no        |
+      | 1    | unexpected EOF                   | yes       |
+      | 1    | wrote 15020 bytes                | no        |
+      | 1    | TimeoutError: request failed     | yes       |
+      | 1    | kind: UnexpectedEof              | yes       |
 
   Scenario: Every module in the publish list is a workspace member
     Then every module in the publish list is in moon.work

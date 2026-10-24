@@ -1,13 +1,27 @@
 ///|
+/// Test support: a new, empty temporary directory whose name starts with `prefix`.
+async fn temporary_directory(
+  prefix : String,
+) -> String raise @provider.StoreError {
+  call("mkdtemp", prefix).text()
+}
+
+///|
+/// Removes a directory and everything in it.
+async fn remove_directory(path : String) -> Unit raise @provider.StoreError {
+  call("rmdir", path) |> ignore
+}
+
+///|
 async test "the Node.js store meets the store contract" {
-  let dir = @node.temporary_directory("okf-node-")
-  @conformance.check_store(@node.NodeStore(dir))
-  @node.remove_directory(dir)
+  let dir = temporary_directory("okf-node-")
+  @conformance.check_store(NodeStore(dir))
+  remove_directory(dir)
 }
 
 ///|
 async test "the Node.js store reports missing directories" {
-  let store = @node.NodeStore("/definitely/not/here/okf")
+  let store = NodeStore("/definitely/not/here/okf")
   let missing = try store.list([]) catch {
     @provider.NotFound(_) => true
     _ => false
@@ -31,7 +45,7 @@ extern "js" fn fs_sync(op : String, a : String, b : String) -> String =
 
 ///|
 async test "the Node.js store refuses symlinks that leave its root" {
-  let base = @node.temporary_directory("okf-node-link-")
+  let base = temporary_directory("okf-node-link-")
   let root = base + "/root"
   let outside = base + "/outside"
   fs_sync("mkdir", root, "") |> ignore
@@ -41,7 +55,7 @@ async test "the Node.js store refuses symlinks that leave its root" {
   fs_sync("symlink", outside + "/secret.md", root + "/link.md") |> ignore
   fs_sync("symlink", outside, root + "/out") |> ignore
   fs_sync("symlink", root + "/inside.md", root + "/alias.md") |> ignore
-  let store = @node.NodeStore(root)
+  let store = NodeStore(root)
   assert_eq(store.list([]).map(e => e.name), ["alias.md", "inside.md"])
   let read_denied = try store.read_text(@okf.StorePath("link.md")) catch {
     @provider.PermissionDenied(_) => true
@@ -73,5 +87,5 @@ async test "the Node.js store refuses symlinks that leave its root" {
   assert_eq(store.read_text(@okf.StorePath("alias.md")), "# In")
   store.delete(@okf.StorePath("link.md"))
   assert_eq(fs_sync("read", outside + "/secret.md", ""), "secret")
-  @node.remove_directory(base)
+  remove_directory(base)
 }

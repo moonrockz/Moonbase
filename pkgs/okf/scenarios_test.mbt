@@ -268,3 +268,29 @@ test "a bundle at the discovery root has no group" {
     [("kb", 1)],
   )
 }
+
+///|
+test "a concept named like an index is not an index for orphan checks" {
+  let k = @okf.discover(
+    set_of([
+      ("index.md", "---\nokf_version: \"0.2\"\n---\n"),
+      ("reindex.md", "---\ntype: Note\n---\nSee [a](/a.md).\n"),
+      ("a.md", "---\ntype: Note\n---\n"),
+    ]),
+  )
+  let orphans = @okf.Graph::build(k).orphans(k).map(key => key.path.to_string())
+  assert_eq(orphans, ["/reindex.md"])
+}
+
+///|
+test "a log heading that is not a real date is undated" {
+  let b = @okf.load_bundle(
+    set_of([
+      ("log.md", "# Log\n\n## 2026-13-45\n\n## 2026-02-30\n\n## 2026-10-23\n"),
+    ]),
+  )
+  guard b.root_log() is Some(log) else { fail("no log") }
+  assert_eq(log.log_model().undated_sections().map(s => s.date), [
+    "2026-13-45", "2026-02-30",
+  ])
+}

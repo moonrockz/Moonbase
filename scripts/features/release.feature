@@ -37,6 +37,8 @@ Feature: Release tooling
       | 0.3.0-rc.1  |
       | vv0.3.0     |
       | 0..3        |
+      | 01.0.0      |
+      | v1.02.3     |
 
   Scenario Outline: Choose the release version
     When I choose the release version with request "<request>", computed "<computed>" and latest tag "<tag>"
@@ -404,6 +406,12 @@ Feature: Release tooling
       | 1    | HTTP 401 Unauthorized            | no        |
       | 1    | HTTP 409 timeout                 | no        |
       | 1    | release not found                | no        |
+      | 1    | HTTP 503 for asset 4013abc       | yes       |
+      | 1    | see the notes thereof            | no        |
+      | 1    | unexpected EOF                   | yes       |
+      | 1    | wrote 15020 bytes                | no        |
+      | 1    | TimeoutError: request failed     | yes       |
+      | 1    | kind: UnexpectedEof              | yes       |
 
   Scenario: The version mooncakes.io publishes
     Given the text:

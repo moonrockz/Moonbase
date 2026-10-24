@@ -170,20 +170,6 @@ pub fn NodeStore::root(self : NodeStore) -> String {
 }
 
 ///|
-/// A new, empty temporary directory whose name starts with `prefix`.
-pub async fn temporary_directory(
-  prefix : String,
-) -> String raise @provider.StoreError {
-  call("mkdtemp", prefix).text()
-}
-
-///|
-/// Removes a directory and everything in it.
-pub async fn remove_directory(path : String) -> Unit raise @provider.StoreError {
-  call("rmdir", path) |> ignore
-}
-
-///|
 fn NodeStore::full(self : NodeStore, segments : ArrayView[String]) -> String {
   if segments.is_empty() {
     self.root
