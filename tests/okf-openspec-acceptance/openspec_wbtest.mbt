@@ -42,19 +42,22 @@ test "this repository's OpenSpec tree loads as a bundle" {
     root=["openspec"],
     profiles=profiles(),
   )
-  guard b.document(@okf.BundlePath("/changes/add-okf-module/proposal.md"))
-    is Some(change) else {
+  let v = @openspec.view(b)
+  // The OKF change is archived under a dated name.
+  guard v.changes.search_by(c => c.name.has_suffix("add-okf-module")) is Some(i) else {
     fail("no add-okf-module change")
   }
-  assert_eq(change.concept_type(), Some("Change"))
-  let v = @openspec.view(b)
-  guard v.changes.search_by(c => c.name == "add-okf-module") is Some(i) else {
-    fail("no view")
-  }
+  assert_true(v.changes[i].archived)
   let deltas = v.changes[i].deltas.map(d => d.capability)
   assert_true(deltas.contains("okf/documents"))
   assert_true(deltas.contains("okf/openspec"))
   assert_true(v.changes[i].task_groups.length() >= 10)
+  let capabilities = v.specs.map(s => s.capability)
+  assert_true(capabilities.contains("okf/providers"))
+  guard v.specs.search_by(s => s.capability == "okf/providers") is Some(p) else {
+    fail("no providers spec")
+  }
+  assert_true(v.specs[p].requirements.length() >= 13)
 }
 
 ///|
