@@ -218,16 +218,17 @@ pub impl @okf.Profile for OpenSpecProfile with fn relations(_, bundle, doc) {
       }
       if other.metadata().concept_type() == Some(delta_type) {
         match other.metadata().text("capability") {
-          Some(cap) => out.push(link_to(spec_path(cap)))
-          None => ()
+          Some(cap) if is_safe_capability(cap) =>
+            out.push(link_to(spec_path(cap)))
+          _ => ()
         }
       }
     }
     ignore(prefix)
   } else if t == delta_type || t == requirement_type || t == scenario_type {
     match meta.text("capability") {
-      Some(cap) => out.push(link_to(spec_path(cap)))
-      None => ()
+      Some(cap) if is_safe_capability(cap) => out.push(link_to(spec_path(cap)))
+      _ => ()
     }
   }
   out

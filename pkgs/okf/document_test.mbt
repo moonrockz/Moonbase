@@ -260,3 +260,13 @@ test "footnote citations join sources" {
     ),
   )
 }
+
+///|
+test "parse_date accepts only real YYYY-MM-DD dates" {
+  assert_true(@okf.Instant::parse_date("2026-02-28") is Some(_))
+  assert_true(@okf.Instant::parse_date("2028-02-29") is Some(_))
+  for
+    bad in ["2026-02-29", "2026-13-01", "2026-9-1", "2026-09-01T00:00:00Z", ""] {
+    assert_true(@okf.Instant::parse_date(bad) is None, msg=bad)
+  }
+}

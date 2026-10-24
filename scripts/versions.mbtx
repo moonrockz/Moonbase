@@ -49,14 +49,17 @@ fn fail_with(message : String) -> Unit {
 }
 
 ///|
-/// Whether `text` is `N.N.N` with digits only.
+/// Whether `text` is `N.N.N`: each part is 1 to 9 digits with no leading zero,
+/// the same rule as `parse_version` in `scripts/release.mbtx`.
 fn is_semver(text : String) -> Bool {
   let parts = text.split(".").map(p => p.to_owned()).collect()
   if parts.length() != 3 {
     return false
   }
   for part in parts {
-    if part.is_empty() {
+    if part.is_empty() ||
+      part.length() > 9 ||
+      (part.length() > 1 && part.has_prefix("0")) {
       return false
     }
     for i in 0..<part.length() {
@@ -70,7 +73,34 @@ fn is_semver(text : String) -> Bool {
 }
 
 ///|
-/// Each place in `text` where `head`, a semver and a closing quote follow each other.
+/// Whether `text` looks like a version: it starts with a digit and has only
+/// letters, digits, `.`, `-` and `+`.
+fn is_version_like(text : String) -> Bool {
+  text.length() > 0 &&
+  text.code_unit_at(0) >= 48 &&
+  text.code_unit_at(0) <= 57 &&
+  text
+  .iter()
+  .all(c => (c >= '0' && c <= '9') ||
+    (c >= 'a' && c <= 'z') ||
+    (c >= 'A' && c <= 'Z') ||
+    c == '.' ||
+    c == '-' ||
+    c == '+')
+}
+
+///|
+/// The version of the root `moon.mod`, or the message that says why it has none.
+fn root_version(moon_mod : String) -> Result[String, String] {
+  match mod_version(moon_mod) {
+    Some(v) if is_semver(v) => Ok(v)
+    Some(v) => Err("The root moon.mod version \{v} is not a version of the form X.Y.Z.")
+    None => Err("The root moon.mod has no version line.")
+  }
+}
+
+///|
+/// Each place in `text` where `head`, a version-like text and a closing quote follow each other.
 /// A place is `(start, end, version)`: the version lies at `start..<end` of `text`.
 fn versions_after(text : String, head : String) -> Array[(Int, Int, String)] {
   let found = []
@@ -80,7 +110,9 @@ fn versions_after(text : String, head : String) -> Array[(Int, Int, String)] {
     let start = from + at + head.length()
     guard text[start:].find("\"") is Some(len) else { break }
     let candidate = text[start:start + len].to_owned()
-    if is_semver(candidate) {
+    // Every version-like text counts, so that `check` reports a malformed one
+    // such as `0.0.02` and `set` replaces it.
+    if is_version_like(candidate) {
       found.push((start, start + len, candidate))
     }
     from = start
@@ -293,10 +325,10 @@ async fn check(expected : String?) -> Unit {
   let expected = match expected {
     Some(v) => v
     None =>
-      match mod_version(files[0].1) {
-        Some(v) => v
-        None => {
-          fail_with("The root moon.mod has no version line.")
+      match root_version(files[0].1) {
+        Ok(v) => v
+        Err(message) => {
+          fail_with(message)
           ""
         }
       }
@@ -418,6 +450,16 @@ impl @moonspec.World for VersionsWorld with fn configure(self, setup) {
     self.result = self.files
       .map(file => set_source_version(file.0, file.1, version))
       .join("|")
+  })
+  setup.then1("the root version check gives {string}", fn(expected : String) raise {
+    let actual = match root_version(self.text) {
+      Ok(v) => v
+      Err(message) => message
+    }
+    @expect.expect(actual).to_equal(expected)
+  })
+  setup.then2("{string} is a version: {string}", fn(text : String, answer : String) raise {
+    @expect.expect(if is_semver(text) { "yes" } else { "no" }).to_equal(answer)
   })
   setup.then1("the mismatches are {string}", fn(expected : String) raise {
     @expect.expect(self.found.join("|")).to_equal(expected)

@@ -19,7 +19,72 @@ pub(all) suberror EditError {
   NoEntry(String)
   /// The marker comment is not in the text.
   NoRegion(String)
+  /// A frontmatter key that is not a plain key: a letter, a digit or `_` first,
+  /// then letters, digits, `_`, `.` or `-`.
+  InvalidKey(String)
+  /// A raw YAML value whose later lines are not indented, so it would add keys
+  /// or close the frontmatter block.
+  InvalidValue(key~ : String, value~ : String)
+  /// A log date that is not a real calendar date in the form `YYYY-MM-DD`.
+  InvalidDate(String)
+  /// A text that must be one line, such as a log message or an index entry
+  /// title, has a line break.
+  LineBreak(field~ : String, text~ : String)
 } derive(Eq, Debug)
+
+///|
+/// Checks that a text has no line break, so that it cannot add lines to a
+/// log or an index.
+fn check_one_line(field : String, text : String) -> Unit raise EditError {
+  if text.contains("\n") || text.contains("\r") {
+    raise LineBreak(field~, text~)
+  }
+}
+
+///|
+/// Checks a top-level frontmatter key, so that an edit cannot write a line that
+/// YAML reads as another key or as the end of the block.
+fn check_key(key : String) -> Unit raise EditError {
+  // Only plain keys: a letter, a digit or `_` first, then letters, digits,
+  // `_`, `.` or `-`. Quoted, anchored, tagged or padded keys read as another key.
+  let first_ok = (c : Char) => {
+    (c >= 'a' && c <= 'z') ||
+    (c >= 'A' && c <= 'Z') ||
+    (c >= '0' && c <= '9') ||
+    c == '_'
+  }
+  let ok = key.length() > 0 &&
+    first_ok(key.get_char(0).unwrap_or(' ')) &&
+    key.iter().all(c => first_ok(c) || c == '.' || c == '-')
+  if !ok {
+    raise InvalidKey(key)
+  }
+}
+
+///|
+/// Checks a raw YAML value: it is one line, or its later lines are indented
+/// continuation lines.
+fn check_value(key : String, value : String) -> Unit raise EditError {
+  let lines = @okf.split_lines(value)
+  for i, line in lines {
+    if i == 0 {
+      continue
+    }
+    let t = line.text
+    if t.length() > 0 && !t.has_prefix(" ") && !t.has_prefix("\t") {
+      raise InvalidValue(key~, value~)
+    }
+  }
+}
+
+///|
+/// Checks that a date is a real calendar date in the form `YYYY-MM-DD`, with
+/// the one shared rule `@okf.Instant::parse_date`.
+fn check_date(date : String) -> Unit raise EditError {
+  guard @okf.Instant::parse_date(date) is Some(_) else {
+    raise InvalidDate(date)
+  }
+}
 
 ///|
 /// Quotes a value for a YAML frontmatter line when it would change its meaning
@@ -110,6 +175,13 @@ pub fn set_raw_keys(
   text : String,
   updates : ArrayView[(String, String?)],
 ) -> EditResult raise EditError {
+  for update in updates {
+    check_key(update.0)
+    match update.1 {
+      Some(v) => check_value(update.0, v)
+      None => ()
+    }
+  }
   let mut current = text
   for update in updates {
     let (key, value) = update
@@ -204,7 +276,13 @@ pub fn index_entry_line(
   title : String,
   destination : String,
   description? : String,
-) -> String {
+) -> String raise EditError {
+  check_one_line("title", title)
+  check_one_line("destination", destination)
+  match description {
+    Some(d) => check_one_line("description", d)
+    None => ()
+  }
   match description {
     Some(d) if d.length() > 0 => "* [\{title}](\{destination}) - \{d}"
     _ => "* [\{title}](\{destination})"
@@ -342,6 +420,12 @@ pub fn add_log_entry(
   message : String,
   label? : String,
 ) -> EditResult raise EditError {
+  check_date(date)
+  check_one_line("message", message)
+  match label {
+    Some(l) => check_one_line("label", l)
+    None => ()
+  }
   let loc = locate(text)
   let lines = loc.lines.copy()
   let e = loc.ending

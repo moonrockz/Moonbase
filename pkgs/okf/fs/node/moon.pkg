@@ -5,11 +5,10 @@ import {
 }
 
 import {
-  "moonrockz/okf",
-  "moonrockz/okf/fs/node",
   "moonrockz/okf/conformance",
-  "moonrockz/okf/provider",
   "moonbitlang/async",
-} for "test"
+} for "wbtest"
+
+// Node.js only: the store calls `node:fs/promises` through JavaScript FFI.
 
 supported_targets = "js"

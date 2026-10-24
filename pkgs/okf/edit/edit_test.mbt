@@ -250,3 +250,184 @@ test "values with line breaks, null-like values and entry markers stay strings" 
     assert_eq(doc.metadata().text("title"), Some(value), msg=value)
   }
 }
+
+///|
+fn edit_error(
+  f : () -> @edit.EditResult raise @edit.EditError,
+) -> @edit.EditError? {
+  try f() catch {
+    e => Some(e)
+  } noraise {
+    _ => None
+  }
+}
+
+///|
+test "frontmatter keys and raw values cannot add keys or close the block" {
+  let text = "---\ntype: A\n---\n"
+  assert_eq(
+    edit_error(() => @edit.set_key(text, "a: b", "x")),
+    Some(InvalidKey("a: b")),
+  )
+  assert_eq(
+    edit_error(() => @edit.set_key(text, "a\n---", "x")),
+    Some(InvalidKey("a\n---")),
+  )
+  assert_eq(
+    edit_error(() => @edit.set_key(text, "", "x")),
+    Some(InvalidKey("")),
+  )
+  assert_eq(
+    edit_error(() => @edit.set_key(text, "- item", "x")),
+    Some(InvalidKey("- item")),
+  )
+  assert_eq(
+    edit_error(() => {
+      @edit.set_raw_keys(text, [("owner", Some("x\nstatus: done"))])
+    }),
+    Some(InvalidValue(key="owner", value="x\nstatus: done")),
+  )
+  // An indented continuation is a valid block value.
+  let r = @edit.set_raw_keys(text, [("tags", Some("\n  - a\n  - b"))])
+  let doc = @okf.Document(
+    @okf.BundlePath("/a.md"),
+    @okf.StorePath("a.md"),
+    r.text,
+  )
+  assert_eq(doc.metadata().texts("tags"), ["a", "b"])
+  assert_eq(doc.metadata().keys(), ["type", "tags"])
+}
+
+///|
+test "log dates must be real calendar dates" {
+  let log = "# Log\n"
+  assert_eq(
+    edit_error(() => @edit.add_log_entry(log, "2026-9-1", "x")),
+    Some(InvalidDate("2026-9-1")),
+  )
+  assert_eq(
+    edit_error(() => @edit.add_log_entry(log, "2026-02-30", "x")),
+    Some(InvalidDate("2026-02-30")),
+  )
+  assert_eq(
+    edit_error(() => @edit.add_log_entry(log, "", "x")),
+    Some(InvalidDate("")),
+  )
+  assert_eq(edit_error(() => @edit.add_log_entry(log, "2026-02-28", "x")), None)
+}
+
+///|
+test "new concept fields are checked" {
+  let refused = try
+    @edit.new_concept_text("Note", "A", "B", fields=[
+      ("owner", "x\nstatus: done"),
+    ])
+  catch {
+    InvalidValue(..) => true
+    _ => false
+  } noraise {
+    _ => false
+  }
+  assert_true(refused)
+}
+
+///|
+test "a transition cannot replace the checked state through extra keys" {
+  let reg = @okf.Register(
+    "intent",
+    "Intent",
+    state_key="state",
+    states=["Backlog", "Review", "Done"],
+    transitions=[@okf.Transition("Review", from=["Backlog"])],
+  )
+  let b = @okf.load_bundle(
+    @okf.DocumentSet::of_texts([
+      ("0001-a.md", "---\ntype: Intent\nstate: Backlog\n---\n"),
+    ]),
+  )
+  let record = reg.records(b)[0]
+  let refused = try
+    @edit.plan_transition(reg, record, "Review", extra=[("state", "Done")])
+  catch {
+    @edit.StateKeyInExtra(key) => key
+    _ => ""
+  } noraise {
+    _ => ""
+  }
+  assert_eq(refused, "state")
+  let no_state = @okf.Register("note", "Note")
+  let missing = try @edit.plan_transition(no_state, record, "Review") catch {
+    @edit.NoStateKey(register~) => register
+    _ => ""
+  } noraise {
+    _ => ""
+  }
+  assert_eq(missing, "note")
+}
+
+///|
+test "only plain frontmatter keys are accepted" {
+  let text = "---\ntype: A\nstate: B\n---\n"
+  for bad in ["\"state\"", "'type'", "state ", "&a x", "[a", "!t x", "", "a b"] {
+    assert_eq(
+      edit_error(() => @edit.set_key(text, bad, "x")),
+      Some(InvalidKey(bad)),
+      msg=bad,
+    )
+  }
+  for
+    good in ["state", "x_1", "owner.team", "stale-after", "_private", "9lives"] {
+    assert_eq(edit_error(() => @edit.set_key(text, good, "x")), None, msg=good)
+  }
+}
+
+///|
+test "log entries and index entries must be one line" {
+  assert_eq(
+    edit_error(() => {
+      @edit.add_log_entry("# Log\n", "2026-01-01", "x\n## 2099-01-01\n* forged")
+    }),
+    Some(LineBreak(field="message", text="x\n## 2099-01-01\n* forged")),
+  )
+  assert_eq(
+    edit_error(() => {
+      @edit.add_log_entry("# Log\n", "2026-01-01", "x", label="A\nB")
+    }),
+    Some(LineBreak(field="label", text="A\nB")),
+  )
+  let refused = try @edit.index_entry_line("Bad\n# Section", "/a.md") catch {
+    LineBreak(field~, ..) => field
+    _ => ""
+  } noraise {
+    _ => ""
+  }
+  assert_eq(refused, "title")
+}
+
+///|
+test "a transition refuses a preview whose frontmatter would not parse" {
+  // The record already has a duplicate-prone layout: the extra value is valid
+  // YAML on its own, but the key collides with an existing key.
+  let reg = @okf.Register(
+    "intent",
+    "Intent",
+    state_key="state",
+    states=["Backlog", "Review"],
+    transitions=[@okf.Transition("Review", from=["Backlog"])],
+  )
+  let b = @okf.load_bundle(
+    @okf.DocumentSet::of_texts([
+      ("0001-a.md", "---\ntype: Intent\nstate: Backlog\nnote: x\n---\n"),
+    ]),
+  )
+  let record = reg.records(b)[0]
+  let refused = try
+    @edit.plan_transition(reg, record, "Review", extra=[("note", "[unclosed")])
+  catch {
+    @edit.PreviewInvalid(_) => true
+    _ => false
+  } noraise {
+    _ => false
+  }
+  assert_true(refused)
+}

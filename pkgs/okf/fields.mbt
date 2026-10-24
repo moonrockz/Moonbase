@@ -135,6 +135,18 @@ pub fn Instant::parse(text : String, date_only~ : Bool = false) -> Instant? {
 }
 
 ///|
+/// Parses a calendar date written exactly as `YYYY-MM-DD`, such as `2026-10-23`,
+/// as the start of that day in UTC. Other forms and dates that do not exist
+/// give `None`.
+pub fn Instant::parse_date(text : String) -> Instant? {
+  if text.length() == 10 {
+    Instant::parse(text, date_only=true)
+  } else {
+    None
+  }
+}
+
+///|
 /// The lifecycle status of a concept (OKF v0.2, section 5.4).
 pub(all) enum Status {
   Draft

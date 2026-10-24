@@ -196,7 +196,11 @@ pub fn new_concept_text(
   description : String,
   fields~ : ArrayView[(String, String)] = [],
   template? : @okf.Template,
-) -> String {
+) -> String raise EditError {
+  for f in fields {
+    check_key(f.0)
+    check_value(f.0, f.1)
+  }
   let lines = [
     "---",
     "type: \{yaml_scalar(concept_type)}",
@@ -349,7 +353,14 @@ pub fn plan_add_missing_entries(
 ///|
 /// Raised when a register refuses a transition.
 pub(all) suberror TransitionRefused {
+  /// The register refuses the transition.
   TransitionRefused(@okf.TransitionCheck)
+  /// The register has no state key, so it has no transitions.
+  NoStateKey(register~ : String)
+  /// An extra key is the state key, which would replace the checked state.
+  StateKeyInExtra(String)
+  /// The edit would leave frontmatter that does not parse.
+  PreviewInvalid(@okf.MetadataError)
 } derive(Debug)
 
 ///|
@@ -364,7 +375,12 @@ pub fn plan_transition(
   extra~ : ArrayView[(String, String)] = [],
 ) -> EditPlan raise {
   guard register.state_key is Some(state_key) else {
-    fail("the register \{register.name} has no state key")
+    raise NoStateKey(register=register.name)
+  }
+  for e in extra {
+    if e.0 == state_key {
+      raise StateKeyInExtra(e.0)
+    }
   }
   let doc = record.document
   let updates : Array[(String, String?)] = [(state_key, Some(yaml_scalar(to)))]
@@ -373,6 +389,10 @@ pub fn plan_transition(
   }
   let after = set_raw_keys(doc.text(), updates).text
   let preview = @okf.Document(doc.path(), doc.store_path(), after)
+  match preview.metadata_error() {
+    Some(e) => raise PreviewInvalid(e)
+    None => ()
+  }
   let check = register.check_transition({ ..record, document: preview, }, to)
   match check {
     Allowed => ()

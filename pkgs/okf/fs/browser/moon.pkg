@@ -12,4 +12,6 @@ import {
   "moonbitlang/async",
 } for "test"
 
+// Browsers only: the store calls the File System Access API through JavaScript FFI.
+
 supported_targets = "js"

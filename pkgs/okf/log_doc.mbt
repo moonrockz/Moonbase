@@ -24,12 +24,7 @@ pub(all) struct LogModel {
 
 ///|
 fn is_date_text(text : String) -> Bool {
-  text.length() == 10 &&
-  text[4] == '-' &&
-  text[7] == '-' &&
-  digits(text, 0, 4) is Some(_) &&
-  digits(text, 5, 2) is Some(_) &&
-  digits(text, 8, 2) is Some(_)
+  Instant::parse_date(text) is Some(_)
 }
 
 ///|

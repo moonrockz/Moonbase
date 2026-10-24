@@ -140,3 +140,42 @@ Feature: One version across the workspace
       inspect("1.0.0", content="1.0.0")
       inspect(@contracts.version(), content="0.0.1")
       """
+
+  Scenario Outline: Only plain X.Y.Z versions without leading zeros
+    Then "<text>" is a version: "<answer>"
+
+    Examples:
+      | text       | answer |
+      | 0.0.2      | yes    |
+      | 1.10.20    | yes    |
+      | 0.0.2-rc   | no     |
+      | 01.0.0     | no     |
+      | 1.00.0     | no     |
+      | 1.2        | no     |
+      | v1.2.3     | no     |
+      | 1234567890.0.0 | no |
+
+  Scenario: The root version must be a version
+    Given the text:
+      """
+      name = "moonrockz/x"
+      version = "0.0.2-rc"
+      """
+    Then the root version check gives "The root moon.mod version 0.0.2-rc is not a version of the form X.Y.Z."
+
+  Scenario: A malformed sibling import version is a mismatch
+    Given a file "a/moon.mod" with the text:
+      """
+      name = "moonrockz/a"
+      version = "0.0.2"
+      """
+    And a file "b/moon.mod" with the text:
+      """
+      name = "moonrockz/b"
+      version = "0.0.2"
+      import {
+        "moonrockz/a@0.0.02",
+      }
+      """
+    When I look for versions other than "0.0.2"
+    Then the mismatches are "b/moon.mod: found 0.0.02, expected 0.0.2"

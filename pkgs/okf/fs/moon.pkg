@@ -13,4 +13,6 @@ import {
   "moonbitlang/async/fs" @afs,
 } for "test"
 
+// Native and wasm only: the store uses `moonbitlang/async/fs`, which has no js backend.
+
 supported_targets = "native+wasm"

@@ -46,6 +46,9 @@ pub fn import_openspec(
   target_root : ArrayView[String],
   date : String,
 ) -> @edit.EditPlan raise {
+  guard @okf.Instant::parse_date(date) is Some(_) else {
+    raise InvalidDate(date)
+  }
   let profile : &@okf.Profile = OpenSpecProfile::{ }
   let bundle = @okf.load_bundle(set, root=source_root, profiles=[profile])
   let changes = []
@@ -112,7 +115,9 @@ pub fn import_openspec(
 }
 
 ///|
-fn index_text(entries : Array[(String, String, String, String?)]) -> String {
+fn index_text(
+  entries : Array[(String, String, String, String?)],
+) -> String raise @edit.EditError {
   let types = []
   for e in entries {
     if !types.contains(e.0) {
@@ -136,11 +141,18 @@ fn index_text(entries : Array[(String, String, String, String?)]) -> String {
 
 ///|
 /// The path of an OpenSpec file for a native concept, from its metadata.
-fn export_path(meta : @okf.Metadata) -> String? {
+fn export_path(meta : @okf.Metadata) -> String? raise ConvertError {
   let t = meta.concept_type().unwrap_or("")
+  let capability = () => {
+    match meta.text("capability") {
+      Some(c) => Some(check_name("capability", c, segments=true))
+      None => None
+    }
+  }
   let change_dir = () => {
     match meta.text("change") {
-      Some(c) =>
+      Some(c) => {
+        let c = check_name("change", c, segments=false)
         Some(
           if meta.text("state") == Some("archived") {
             "changes/archive/\{c}"
@@ -148,11 +160,12 @@ fn export_path(meta : @okf.Metadata) -> String? {
             "changes/\{c}"
           },
         )
+      }
       None => None
     }
   }
   if t == specification_type {
-    meta.text("capability").map(c => "specs/\{c}/spec.md")
+    capability().map(c => "specs/\{c}/spec.md")
   } else if t == change_type {
     change_dir().map(d => d + "/proposal.md")
   } else if t == design_type {
@@ -160,12 +173,65 @@ fn export_path(meta : @okf.Metadata) -> String? {
   } else if t == tasks_type {
     change_dir().map(d => d + "/tasks.md")
   } else if t == delta_type {
-    match (change_dir(), meta.text("capability")) {
+    match (change_dir(), capability()) {
       (Some(d), Some(c)) => Some("\{d}/specs/\{c}/spec.md")
       _ => None
     }
   } else {
     None
+  }
+}
+
+///|
+/// Raised when a conversion cannot use a value of a concept.
+pub(all) suberror ConvertError {
+  /// A `capability` or `change` value that is not a safe OpenSpec name: an
+  /// empty segment, `.`, `..`, a segment that starts or ends with `.` or ends
+  /// with a space, a Windows device name such as `CON`, a control character, or
+  /// one of `\ : * ? " < > |` (and `/` outside the separators between
+  /// capability segments).
+  InvalidName(key~ : String, value~ : String)
+  /// A log date that is not a real calendar date in the form `YYYY-MM-DD`.
+  InvalidDate(String)
+} derive(Eq, Debug)
+
+///|
+/// Checks that `value` is a safe OpenSpec name, so that a path built from it
+/// stays inside the target directory. `segments=true` allows `/` between
+/// segments, as capability paths have.
+fn check_name(
+  key : String,
+  value : String,
+  segments~ : Bool,
+) -> String raise ConvertError {
+  let parts = if segments {
+    value.split("/").map(p => p.to_owned()).collect()
+  } else {
+    [value]
+  }
+  for part in parts {
+    let ok = part.length() > 0 &&
+      part != "." &&
+      part != ".." &&
+      !part.has_prefix(".") &&
+      !part.has_suffix(".") &&
+      !part.has_suffix(" ") &&
+      !is_windows_device(part) &&
+      part.iter().all(c => c.to_int() >= 32 && !"\\/:*?\"<>|".contains_char(c))
+    if !ok {
+      raise InvalidName(key~, value~)
+    }
+  }
+  value
+}
+
+///|
+/// True when `value` is a safe capability path.
+fn is_safe_capability(value : String) -> Bool {
+  try check_name("capability", value, segments=true) catch {
+    _ => false
+  } noraise {
+    _ => true
   }
 }
 
@@ -241,4 +307,28 @@ pub fn export_openspec(
     }
   }
   @edit.EditPlan(changes)
+}
+
+///|
+pub extend ConvertError with Eq::{not_equal, equal}
+
+///|
+pub extend ConvertError with @debug.Debug::{to_repr}
+
+///|
+/// True for a Windows device name, such as `CON` or `com1.txt`, which a Windows
+/// file system cannot use as a file name.
+fn is_windows_device(part : String) -> Bool {
+  let stem = match part.find(".") {
+    Some(i) => part[:i].to_owned()
+    None => part
+  }
+  let upper = stem.to_upper()
+  ["CON", "PRN", "AUX", "NUL"].contains(upper) ||
+  (
+    upper.length() == 4 &&
+    (upper.has_prefix("COM") || upper.has_prefix("LPT")) &&
+    upper[3] >= '1' &&
+    upper[3] <= '9'
+  )
 }
